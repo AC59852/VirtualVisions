@@ -1,0 +1,14 @@
+{
+  "games": [
+    {
+      "id": 1,
+      "name": "Animal Crossing",
+      "image": "/games/ac-n.svg"
+    },
+    {
+      "id": 2,
+      "name": "world of warcraft: classic",
+      "image": "/games/wow-c.webp"
+    }
+  ]
+}
