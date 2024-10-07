@@ -35,7 +35,7 @@
       data = items;
       console.log(data);
     } catch (error) {
-      console.error('Error fetching:', error);
+      console.error('Error fetching data:', error);
     }
   }
 
