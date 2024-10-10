@@ -17,7 +17,6 @@
             if (docSnap.exists()){
                 console.log("User data: ", docSnap.data());
             } else{
-                console.log("User is not in db, creating entry");
                 await setDoc(userRef, {displayName: auth.currentUser.displayName, email:auth.currentUser.email, following: [], photoURL: auth.currentUser.photoURL, uid: auth.currentUser.uid})
             }
 
