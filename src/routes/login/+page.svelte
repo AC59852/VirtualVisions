@@ -3,6 +3,7 @@
     import {GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
     import { doc, getDoc, addDoc, setDoc, collection } from 'firebase/firestore';
     import { redirect } from '@sveltejs/kit';
+	import { goto } from '$app/navigation';
 
     async function loginWithGoogle() {
         try{
@@ -20,7 +21,8 @@
                 await setDoc(userRef, {displayName: auth.currentUser.displayName, email:auth.currentUser.email, following: [], photoURL: auth.currentUser.photoURL, uid: auth.currentUser.uid})
             }
 
-            //throw redirect(308, '/signedin');
+            // redirect to signed in page
+            goto('/signedin');
         } catch (e){
             console.log(e);
         }
