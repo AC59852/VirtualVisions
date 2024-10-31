@@ -2,7 +2,6 @@
     import {auth, firestore} from '$lib/firebase';
     import {GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
     import { doc, getDoc, addDoc, setDoc, collection } from 'firebase/firestore';
-    import { redirect } from '@sveltejs/kit';
 	import { goto } from '$app/navigation';
 
     async function loginWithGoogle() {
