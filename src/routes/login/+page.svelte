@@ -17,12 +17,17 @@
 
             if (docSnap.exists()){
                 console.log("User data: ", docSnap.data());
+                // redirect to signed in page
+                goto('/signedin');
             } else{
-                await setDoc(userRef, {displayName: auth.currentUser.displayName, email:auth.currentUser.email, following: [], photoURL: auth.currentUser.photoURL, uid: auth.currentUser.uid})
+                await setDoc(userRef, {displayName: auth.currentUser.displayName, email:auth.currentUser.email, following: [], followingGames: [], onBoardingProcess: [{
+                    {id: 0, componentName: "ProfileComponent", complete: true},
+                    {id: 1, componentName: "GamesComponent", complete: false},
+                    {id: 2, componentName: "FinishedComponent", complete: false}
+                }], photoURL: auth.currentUser.photoURL, uid: auth.currentUser.uid})
+                goto('/onboarding/games');
             }
 
-            // redirect to signed in page
-            goto('/signedin');
         } catch (e){
             console.log(e);
         }
