@@ -5,6 +5,8 @@
     let email = "";
     let password = "";
 
+    let errorMessage = "";
+
     async function signUp(){
         try{
             await createUserWithEmailAndPassword(auth, email, password);
@@ -18,6 +20,8 @@
             //Make sure password is valid (over 6 chars)
         } catch (e){
             console.log(e);
+            
+            errorMessage = e.message;
         }
     }
 
@@ -27,5 +31,8 @@
 
 <input placeholder="email..." bind:value={email}/>
 <input placeholder="password..." type="password" bind:value={password}/>
+
+<!-- display error -->
+<p>{errorMessage}</p>
 
 <button on:click={signUp}>Sign up with email and password</button>
