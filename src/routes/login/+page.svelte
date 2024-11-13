@@ -1,8 +1,7 @@
 <script>
-    import {auth, firestore} from '$lib/firebase';
-    import {GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
-    import { doc, getDoc, addDoc, setDoc, collection } from 'firebase/firestore';
-    import { redirect } from '@sveltejs/kit';
+	import { auth, firestore } from '$lib/firebase';
+	import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+	import { doc, getDoc, addDoc, setDoc, collection } from 'firebase/firestore';
 	import { goto } from '$app/navigation';
 
     async function loginWithGoogle() {
@@ -35,7 +34,6 @@
 
 //<a href="/signedin"><button on:click={loginWithGoogle}>Log in with Google</button></a>
 </script>
-
 
 <h1>Log in</h1>
 <button on:click={loginWithGoogle}>Log in with Google</button>
