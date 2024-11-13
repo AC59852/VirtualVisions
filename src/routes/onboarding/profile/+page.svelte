@@ -7,11 +7,12 @@
     import { user } from '$lib/stores/user';
     import { onDestroy } from 'svelte';
     import { doc, getDoc, addDoc, setDoc, updateDoc, collection } from 'firebase/firestore';
-    import { getStorage, ref, uploadBytes} from 'firebase/storage';
+    import { getStorage, ref, uploadBytes,  getDownloadURL} from 'firebase/storage';
 
     //let loading = true; // Track if auth state is still loading
     let displayName = ""
-    let isPhoto = false;
+    //let userPfp = "gs://virtual-visions.appspot.com/DefaultVV.jfif";
+    let userPfp = "";
 
     /*
     // Store the unsubscribe function to clean up the listener
@@ -51,9 +52,9 @@
             await setDisplayName(displayName);
 
             //If there is no photo
-            if (isPhoto === false){
+            /*if (isPhoto === false){
                 //Set photo to the default
-            }
+            }*/
 
             //Sets the ProfileComponent to true
             await updateDoc(userRef, {
@@ -62,6 +63,13 @@
                     {id: 1, componentName: "GamesComponent", complete: false},
                     {id: 2, componentName: "FinishedComponent", complete: false}
             ]}) 
+            
+            if(userPfp != ""){
+                //Makes the uploaded photo the user's 
+                await updateDoc(userRef, {
+                    photoURL: userPfp
+                })
+            }
             //Send user to Games
             goto('/onboarding/games');
         } catch(e){
@@ -85,25 +93,36 @@
     
     const storage = getStorage();
 
-    //make reactive photo
-    //Make it store in the user collection via a URL 
+    //Make a default pfp
     async function setPhoto(){
         const file = document.querySelector("#profilePhoto").files[0]
         const filename = 'profilePhotos/' + file.name
         const storageRef = ref(storage, filename)
         try{
+            
             uploadBytes(storageRef,file).then((snapshot) => {
                 console.log("File uploaded!");
             })
-            isPhoto = true;
+
+            //sets the img in page to the just uploaded photo
+            getDownloadURL(storageRef).then((url) =>
+                userPfp = url
+            )
         } catch(e){
             console.error(e);
         }
+
+
+        
     }
     
 </script>
 
 <h1>Profile</h1>
+
+{#if userPfp}
+    <img alt="User profile pic" src={userPfp}/>
+{/if}
 
 <input bind:value={displayName} placeholder="Display Name"/>
 
