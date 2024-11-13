@@ -5,7 +5,7 @@
     import { onDestroy } from 'svelte';
     import { goto } from '$app/navigation';
 
-    let loading = true; // Track if auth state is still loading
+    /*let loading = true; // Track if auth state is still loading
 
     // Store the unsubscribe function to clean up the listener
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -19,7 +19,7 @@
         console.log('Component destroyed, removing auth listener');
         unsubscribe(); // Clean up the listener
         user.set(null); // Clear the user store
-    });
+    });*/
 
     // Function to sign out the user
     async function VVSignOut() {
@@ -33,7 +33,7 @@
     }
 
     //Function to send the user to the signed in page if onboarding complete
-    async function VVFinishedOnboarding(){
+    function VVFinishedOnboarding(){
         try {
             //Update the object to say onbaording is complete
         
