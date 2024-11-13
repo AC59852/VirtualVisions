@@ -4,36 +4,35 @@
 	import { doc, getDoc, addDoc, setDoc, collection } from 'firebase/firestore';
 	import { goto } from '$app/navigation';
 
-	async function loginWithGoogle() {
-		try {
-			const provider = new GoogleAuthProvider();
+    async function loginWithGoogle() {
+        try{
+            const provider = new GoogleAuthProvider();
 
-			await signInWithPopup(auth, provider);
+            await signInWithPopup(auth,provider);
 
-			//Create user profile with google sign in
-			const userRef = doc(firestore, 'users', auth.currentUser.uid);
-			const docSnap = await getDoc(userRef);
+            //Create user profile with google sign in
+            const userRef = doc(firestore, 'users', auth.currentUser.uid);
+            const docSnap = await getDoc(userRef);
 
-			if (docSnap.exists()) {
-				console.log('User data: ', docSnap.data());
-			} else {
-				await setDoc(userRef, {
-					displayName: auth.currentUser.displayName,
-					email: auth.currentUser.email,
-					following: [],
-					photoURL: auth.currentUser.photoURL,
-					uid: auth.currentUser.uid
-				});
-			}
+            if (docSnap.exists()){
+                console.log("User data: ", docSnap.data());
+                // redirect to signed in page
+                goto('/signedin');
+            } else{
+                await setDoc(userRef, {displayName: auth.currentUser.displayName, email:auth.currentUser.email, following: [], followingGames: [], onBoardingProcess: [
+                    {id: 0, componentName: "ProfileComponent", complete: true},
+                    {id: 1, componentName: "GamesComponent", complete: false},
+                    {id: 2, componentName: "FinishedComponent", complete: false}
+                ], photoURL: auth.currentUser.photoURL, uid: auth.currentUser.uid})
+                goto('/onboarding/profile');
+            }
 
-			// redirect to signed in page
-			goto('/signedin');
-		} catch (e) {
-			console.log(e);
-		}
-	}
+        } catch (e){
+            console.log(e);
+        }
+    }
 
-	//<a href="/signedin"><button on:click={loginWithGoogle}>Log in with Google</button></a>
+//<a href="/signedin"><button on:click={loginWithGoogle}>Log in with Google</button></a>
 </script>
 
 <h1>Log in</h1>
