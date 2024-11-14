@@ -1,11 +1,10 @@
 <script>
 
-
     import { auth, firestore } from '$lib/firebase';
     import { goto } from '$app/navigation';
     import { signOut, onAuthStateChanged } from 'firebase/auth';
     import { user } from '$lib/stores/user';
-    import { onDestroy } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import { doc, getDoc, addDoc, setDoc, updateDoc, collection } from 'firebase/firestore';
     import { getStorage, ref, uploadBytes,  getDownloadURL} from 'firebase/storage';
 
@@ -14,11 +13,22 @@
     //let userPfp = "gs://virtual-visions.appspot.com/DefaultVV.jfif";
     let userPfp = "";
 
+    const userRef = doc(firestore, 'users', auth.currentUser.uid);
+
+    onMount(() => {
+        if(auth.currentUser == null){
+            goto('/login');
+        }
+        /*onAuthStateChanged(auth, (currentUser) => {
+            const userRef = doc(firestore, 'users', auth.currentUser.uid);
+        });*/
+    });
+    
     /*
     // Store the unsubscribe function to clean up the listener
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
         user.set(currentUser); // Update the user store
-        loading = false; // Done checking the auth state
+        //loading = false; // Done checking the auth state
         console.log('User state changed:', currentUser);
     });
 
@@ -43,7 +53,7 @@
         }
     }
 
-    const userRef = doc(firestore, 'users', auth.currentUser.uid);
+    
 
     //Send user to the game page
     async function VVToGamesPage(){
@@ -55,14 +65,6 @@
             /*if (isPhoto === false){
                 //Set photo to the default
             }*/
-
-            //Sets the ProfileComponent to true
-            await updateDoc(userRef, {
-                onBoardingProcess: [
-                    {id: 0, componentName: "ProfileComponent", complete: true},
-                    {id: 1, componentName: "GamesComponent", complete: false},
-                    {id: 2, componentName: "FinishedComponent", complete: false}
-            ]}) 
             
             if(userPfp != ""){
                 //Makes the uploaded photo the user's 
@@ -93,7 +95,7 @@
     
     const storage = getStorage();
 
-    //Make a default pfp
+    // TODO Make a default pfp
     async function setPhoto(){
         const file = document.querySelector("#profilePhoto").files[0]
         const filename = 'profilePhotos/' + file.name

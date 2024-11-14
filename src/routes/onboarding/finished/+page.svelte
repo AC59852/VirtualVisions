@@ -1,10 +1,11 @@
 <script>
-    import { auth } from '$lib/firebase';
+    import { auth,firestore } from '$lib/firebase';
     import { signOut, onAuthStateChanged } from 'firebase/auth';
     import { user } from '$lib/stores/user';
     import { onDestroy } from 'svelte';
     import { goto } from '$app/navigation';
 
+    const userRef = doc(firestore, 'users', auth.currentUser.uid);
     /*let loading = true; // Track if auth state is still loading
 
     // Store the unsubscribe function to clean up the listener
@@ -33,10 +34,10 @@
     }
 
     //Function to send the user to the signed in page if onboarding complete
-    function VVFinishedOnboarding(){
+    async function VVFinishedOnboarding(){
         try {
-            //Update the object to say onbaording is complete
-        
+            //Update the object to say onboarding is complete
+             await updateDoc(userRef, {onBoardingProcess: true})
             //Redirect to the signin page
             goto('/signedin');
         } catch (e){

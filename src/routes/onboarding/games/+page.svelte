@@ -1,11 +1,13 @@
 <script>
 
-    import { auth } from '$lib/firebase';
+    import { auth, firestore } from '$lib/firebase';
     import { goto } from '$app/navigation';
     import { signOut, onAuthStateChanged } from 'firebase/auth';
     import { user } from '$lib/stores/user';
-    import { onDestroy } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
+    import { doc, getDoc, addDoc, setDoc, updateDoc, collection } from 'firebase/firestore';
 
+    const userRef = doc(firestore, 'users', auth.currentUser.uid);
     /*let loading = true; // Track if auth state is still loading
 
     // Store the unsubscribe function to clean up the listener
@@ -22,7 +24,21 @@
         user.set(null); // Clear the user store
     });*/
 
-    let followingGames = []
+    onMount(() => {
+        if(auth.currentUser == null){
+            goto('/login');
+        }
+        /*try{
+            const userRef = doc(firestore, 'users', auth.currentUser.uid);
+        } catch(e){
+            console.error(e);
+        }*/
+        /*onAuthStateChanged(auth, (currentUser) => {
+            const userRef = doc(firestore, 'users', auth.currentUser.uid);
+        });*/
+    });
+
+    let followingGamesArr = []
 
     //Function to return back to the display name page
     //Backpage behaviour
@@ -36,9 +52,10 @@
 
 
     //Function to go to finished page
-    function VVToFinishedPage(){
+    async function VVToFinishedPage(){
         try{
             //Sets the array of followed games 
+             await updateDoc(userRef, {followingGames: followingGamesArr})
             //Moves to next page
             goto('/onboarding/finished');
         } catch(e){
@@ -47,11 +64,18 @@
     }
 
 
-async function addGameToList(){
-
-}
+    function addGameToList(){
+        followingGamesArr.push(this.value);
+    }
     //export let data;
     //export const data;
+
+    /*<h1>Current Games:</h1>
+    {#if followingGamesArr}
+    {#each followingGamesArr as game}
+        <p>{game}</p>
+    {/each}
+    {/if}*/
 
 </script>
 
@@ -59,13 +83,14 @@ async function addGameToList(){
 
 <p>Choose a game (Up to 5)</p>
 
-<button on:click={addGameToList}>Minecraft</button>
-<button on:click={addGameToList}>Silent Hill</button>
-<button on:click={addGameToList}>Castleminer Z</button>
-<button on:click={addGameToList}>Killing Floor 2</button>
-<button on:click={addGameToList}>XCOM</button>
+<button on:click={addGameToList} value="Minecraft">Minecraft</button>
+<button on:click={addGameToList} value="Silent Hill">Silent Hill</button>
+<button on:click={addGameToList} value="Castleminer Z">Castleminer Z</button>
+<button on:click={addGameToList} value="Killing Floor 2">Killing Floor 2</button>
+<button on:click={addGameToList} value="XCOM">XCOM</button>
 
-<p>Current Games: {followingGames}</p>
+
+
 
 <button on:click={VVBackToProfile}>Back</button>
 <button on:click={VVToFinishedPage}>Next</button>

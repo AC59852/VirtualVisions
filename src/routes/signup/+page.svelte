@@ -26,11 +26,8 @@
                 const userRef = doc(firestore, 'users', auth.currentUser.uid);
 
                 try{
-                    await setDoc(userRef, {displayName: "", email:auth.currentUser.email, following: [], followingGames: [], onBoardingProcess: [
-                        {id: 0, componentName: "ProfileComponent", complete: false},
-                        {id: 1, componentName: "GamesComponent", complete: false},
-                        {id: 2, componentName: "FinishedComponent", complete: false}
-                    ], photoURL: "", uid: auth.currentUser.uid})
+                    await setDoc(userRef, {displayName: "", email:auth.currentUser.email, following: [], followingGames: [], onBoardingProcess: false
+                    , photoURL: "", uid: auth.currentUser.uid})
 
                     //Start onboarding process
                     goto('/onboarding/profile');
