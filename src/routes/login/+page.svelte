@@ -45,7 +45,6 @@
 //<a href="/signedin"><button on:click={loginWithGoogle}>Log in with Google</button></a>
 </script>
 
-
 <h1>Log in</h1>
 <button on:click={loginWithGoogle}>Log in with Google</button>
 

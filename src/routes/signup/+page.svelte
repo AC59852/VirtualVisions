@@ -42,12 +42,14 @@
             console.log(e);
         }
     }
-
 </script>
 
 <h1>Sign Up Page</h1>
 
-<input placeholder="email..." bind:value={email}/>
-<input placeholder="password..." type="password" bind:value={password}/>
+<input placeholder="email..." bind:value={email} />
+<input placeholder="password..." type="password" bind:value={password} />
+
+<!-- display error -->
+<p>{errorMessage}</p>
 
 <button on:click={signUp}>Sign up with email and password</button>
