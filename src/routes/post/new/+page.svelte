@@ -5,6 +5,7 @@
 	import { collection, addDoc, arrayUnion, doc, updateDoc } from 'firebase/firestore';
 	import { get } from 'svelte/store';
 	import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+	import allGames from '$lib/games/all-games.json';
 
 	onMount(() => {
 		const unsubscribeAuth = auth.onAuthStateChanged((firebaseUser) => {
@@ -18,16 +19,22 @@
 		return () => unsubscribeAuth();
 	});
 
-	let games = [
-		{ id: 'SrO15GjWJ2YxbBZeeZUd', game: "Marvel's Spider-Man" },
-		{ id: 'wpvT4h5L3leDBqOtW2cp', game: "Assassin's Creed Odyssey" }
-	];
+	let games = allGames;
+
+	console.log(games);
 
 	async function createPost(event) {
 		event.preventDefault();
 
 		const formData = new FormData(event.target);
 		const imageFile = formData.get('image'); // Get the file object
+
+		console.log("form data:", {
+			game: formData.get('game'),
+			title: formData.get('title'),
+			content: formData.get('description'),
+			image: imageFile
+		})
 
 		// Define the path for the image in the root folder
 		const imagePath = `${get(user).uid}/${imageFile.name}`;
@@ -44,19 +51,20 @@
 		const post = {
 			game: formData.get('game'),
 			title: formData.get('title'),
-			content: formData.get('content'),
-			imageUrl: downloadURL, // Save the public URL
-			account: get(user).uid
+			description: formData.get('description'),
+			path: downloadURL, // Save the public URL
+			account: get(user).uid,
+			createdAt: new Date().toISOString()
 		};
 
 		// Add the post to Firestore
-		const docRef = await addDoc(collection(firestore, 'posts'), post);
-		console.log('Document written with ID:', docRef.id);
+		const postRef = await addDoc(collection(firestore, 'posts'), post);
+		console.log('Document written with ID:', postRef.id);
 
 		// Update the user's post array in Firestore
 		const userRef = doc(collection(firestore, 'users'), get(user).uid);
 		await updateDoc(userRef, {
-			posts: arrayUnion(docRef.id)
+			posts: arrayUnion(postRef)
 		});
 	}
 
@@ -69,19 +77,20 @@
 			output.onload = () => URL.revokeObjectURL(output.src);
 		}
 	}
+
 </script>
 
 <h1>Test</h1>
 
 <form on:submit={createPost}>
 	<select name="game">
-		{#each games as { id, game }}
-			<option value={id}>{game}</option>
+		{#each games as game}
+			<option value={game.id}>{game.name}</option>
 		{/each}
 	</select>
 
 	<input type="text" name="title" placeholder="Title" />
-	<input type="text" name="content" placeholder="Content" />
+	<textarea type="text" name="description" placeholder="Description" />
 
 	<input type="file" name="image" accept="image/*" on:change={previewImage} />
 

@@ -28,7 +28,6 @@ export async function GET({}) {
 		}
 
 		data = items; // Setting data will now trigger reactivity with $:
-		console.log(data);
 	} catch (error) {
 		console.error('Error fetching:', error);
 	}

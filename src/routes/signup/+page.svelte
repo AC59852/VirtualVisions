@@ -6,6 +6,7 @@
 
     let email = "";
     let password = "";
+    let errorMessage = null;
 
     async function signUp(){
         try{
@@ -36,13 +37,16 @@
                     goto('/onboarding/profile');
                 } catch(e){
                     console.error(e)
+                    errorMessage = e.message;
                 }
             }
             catch{
                 console.log(e);
+                errorMessage = e.message;
             }
         } catch (e){
             console.log(e);
+            errorMessage = e.message;
         }
     }
 </script>
@@ -53,6 +57,8 @@
 <input placeholder="password..." type="password" bind:value={password} />
 
 <!-- display error -->
-<p>{errorMessage}</p>
+{#if errorMessage}
+    <p>{errorMessage}</p>
+{/if}
 
 <button on:click={signUp}>Sign up with email and password</button>

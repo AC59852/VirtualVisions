@@ -1,58 +1,53 @@
 <script>
-	import { firestore, storage } from '$lib/firebase';
-	import { collection, getDocs } from 'firebase/firestore';
-	import { ref, getDownloadURL } from 'firebase/storage';
+	import { auth } from '$lib/firebase';
+	import { user } from '$lib/stores/user';
+	import { onMount } from 'svelte';
+	import AllPosts from "../lib/components/AllPosts.svelte";
+	import { onAuthStateChanged } from 'firebase/auth';
+	import HomePagePost from '../lib/components/HomePagePost.svelte';
 
+	let loggedInUser = null;
 	let data = [];
 
-	async function fetchData() {
-		try {
-			// Fetch documents from Firestore
-			const querySnapshot = await getDocs(collection(firestore, 'posts'));
-			const items = [];
-
-			// Iterate over each document
-			for (const doc of querySnapshot.docs) {
-				const item = doc.data();
-				const imagePath = item.path; // Assuming your image path field is 'imagePath'
-
-				// Fetch the download URL if the imagePath exists
-				if (imagePath) {
-					try {
-						const imageRef = ref(storage, imagePath);
-						const url = await getDownloadURL(imageRef);
-						item.imageUrl = url; // Add the image URL to the item
-					} catch (error) {
-						console.error('Error fetching image URL:', error);
-						item.imageUrl = ''; // Set to empty if there's an error
-					}
-				}
-
-				items.push(item);
-			}
-
-			// Update the data array
-			data = items;
-			console.log(data);
-		} catch (error) {
-			console.error('Error fetching:', error);
-		}
+	async function fetchUserHomePosts() {
+		const response = await fetch('/api/user-posts', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ uid: loggedInUser.uid })
+		});
+		data = await response.json();
+		data = data.posts;
 	}
 
-	fetchData();
+	onMount(() => {
+		onAuthStateChanged(auth, (currentUser) => {
+			if (currentUser) {
+				// get the user from store
+				user.subscribe((value) => {
+					// compare the user.uid with the currentUser.uid
+					if (value && value.uid === currentUser.uid) {
+						console.log("user validated")
+						loggedInUser = currentUser;
+						fetchUserHomePosts();
+					} else {
+						loggedInUser = null;
+						return;
+					}
+				});
+			}
+		});
+	});
 </script>
 
 <h1>Page</h1>
-
-{#each data as item}
-	<div>
-		<h2>{item.title}</h2>
-		{#if item.imageUrl}
-			<img
-				src={item.imageUrl}
-				alt={item.title}
-				style="width: 800px; height: 587px; object-fit: cover; object-position: center;"
-			/>
-		{/if}
-	</div>
-{/each}
+<section>
+	{#if loggedInUser}
+		{#each data as item}
+		  <HomePagePost post={item} />
+		{/each}
+	{:else}
+		<AllPosts />
+	{/if}
+</section>
