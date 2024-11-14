@@ -6,7 +6,6 @@
 	async function fetchData() {
 		const response = await fetch('/api/all-posts');
 		data = await response.json();
-		console.log(data);
 	}
 
 	// Trigger fetch data on component mount
@@ -15,7 +14,6 @@
 	});
 </script>
 
-<h1>Test</h1>
 {#each data as item}
 	<div>
 		<h2>{item.title}</h2>
