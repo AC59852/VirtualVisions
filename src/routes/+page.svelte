@@ -42,7 +42,7 @@
 </script>
 
 <h1>Page</h1>
-<section>
+<section class="home__feed">
 	{#if loggedInUser}
 		{#each data as item}
 		  <HomePagePost post={item} />
@@ -51,3 +51,11 @@
 		<AllPosts />
 	{/if}
 </section>
+<style>
+	.home__feed {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		max-width: 758px;
+	}
+</style>
