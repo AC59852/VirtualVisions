@@ -160,4 +160,12 @@
     color: #fff;
     line-height: 1.4;
   }
+
+  .homePost__line {
+    display: block;
+    width: 100%;
+    height: 1px;
+    background-color: #4E4E4E;
+    margin: 33px 0;
+  }
 </style>

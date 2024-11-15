@@ -57,5 +57,6 @@
 		flex-direction: column;
 		align-items: center;
 		max-width: 758px;
+		margin: 0 auto;
 	}
 </style>
