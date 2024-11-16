@@ -40,6 +40,7 @@
 	<p>Welcome, {$user.displayName}</p>
 	<button on:click={VVSignOut}>Sign Out</button>
 	<button on:click={() => console.log($user)}>Show User</button>
+	<a href="/">home</a>
 {:else}
 	<h1>Not Signed In</h1>
 	<p>Please sign in to continue.</p>

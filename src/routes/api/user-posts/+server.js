@@ -94,7 +94,15 @@ export async function POST({request}) {
         const validPosts = postsData.filter(post => post !== null);
         console.log("Fetched posts with user data:", validPosts);
 
-        return json({ posts: validPosts });
+        return json({ 
+            posts: validPosts,
+            // return the user displayName, photoURL, and uid
+            user: {
+                displayName: userDoc.data().displayName,
+                photoURL: userDoc.data().photoURL,
+                uid
+            } 
+        });
     }
     catch (e) {
         return json({
