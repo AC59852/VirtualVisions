@@ -5,13 +5,20 @@
 	import { doc, getDoc, addDoc, setDoc, collection } from 'firebase/firestore';
 	import { onMount } from 'svelte';
 
-    let userPageID = $page.params.userID
+    //User ID for the user to be rendered on the page
+    let userPageID = $page.params.userID 
+    //The data of the current user to be rendered in the page
     let userPage = null;
+    //Var to see if the current user is following the user on the page
+    let isFollowing = null;
+    //To see if the user is logged in or a guest/anon
+    let guest = false;
 
     console.log(auth.currentUser)
 
     //If the user exists get the user data
     onMount( async () => {
+        //Try and get the user to be rendered
         try{
             const userRef = doc(firestore, 'users',  $page.params.userID);
             const docSnap = await getDoc(userRef);
@@ -23,9 +30,20 @@
         } catch (e) {
             console.error(e)
         }
-    })
 
-    //If user is following user, show so, other show 'follow'
+        //Check if the current user is following the user on the page
+        try{
+            const userRef = doc(firestore, 'users', auth.currentUser.uid);
+            const docSnap = await getDoc(userRef);
+
+            if(docSnap.exists()){
+                const curUser = docSnap.data();
+                isFollowing = curUser.following.find((u) => u == $page.params.userID);
+            }
+        } catch (e){
+            console.log(e)
+        }
+    })
 
     //Think about how to read posts
 
@@ -36,8 +54,9 @@
     <h1>{userPage.displayName}</h1> 
     {#if userPage.uid == auth.currentUser.uid}
         <a>Edit profile</a>
-    {:else}
+    {:else if isFollowing}
         <p>Following</p>
+    {:else}
         <p>Not following</p>
     {/if}
 
