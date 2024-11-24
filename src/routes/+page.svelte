@@ -23,11 +23,27 @@
 			});
 			let data = await response.json();
 			posts = data.posts;
-			userData = data.user;
 		} catch (error) {
 			console.error("Failed to fetch user home posts:", error);
 		} finally {
 			loading = false; // Stop loading after data is fetched
+		}
+	}
+
+	async function getUser() {
+		try {
+			const response = await fetch('/api/get-user', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ uid: loggedInUser.uid })
+			});
+			let data = await response.json();
+
+			userData = data.user;
+		} catch (error) {
+			console.error("Failed to fetch user data:", error);
 		}
 	}
 
@@ -41,6 +57,7 @@
 						console.log("user validated");
 						loggedInUser = currentUser;
 						fetchUserHomePosts();
+						getUser();
 					} else {
 						loggedInUser = null;
 						goto('/login');

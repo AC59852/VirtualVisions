@@ -3,11 +3,12 @@ import { firestore, storage } from '$lib/firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { doc, getDoc } from 'firebase/firestore';
 import allGames from '$lib/games/all-games.json'; // Import the JSON file
+import { user as currentUser } from '$lib/stores/user';
 
 export async function POST({request}) {
     const { uid } = await request.json();
 
-    console.log(uid)
+    console.log(uid);
 
     try {
         const userDoc = await getDoc(doc(firestore, 'users', uid));
@@ -95,13 +96,7 @@ export async function POST({request}) {
         console.log("Fetched posts with user data:", validPosts);
 
         return json({ 
-            posts: validPosts,
-            // return the user displayName, photoURL, and uid
-            user: {
-                displayName: userDoc.data().displayName,
-                photoURL: userDoc.data().photoURL,
-                uid
-            } 
+            posts: validPosts
         });
     }
     catch (e) {
