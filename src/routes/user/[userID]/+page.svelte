@@ -4,6 +4,7 @@
     import { page } from '$app/stores'
 	import { doc, getDoc, addDoc, setDoc, collection } from 'firebase/firestore';
 	import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
 
     //User ID for the user to be rendered on the page
     let userPageID = $page.params.userID 
@@ -13,7 +14,14 @@
     let isFollowing = null;
     //To see if the user is logged in or a guest/anon
     let guest = false;
+    //user posts
+    let posts = [];
+    $: console.log(posts);
 
+    //Modal toggle
+    let showModal = false;
+
+    let currentPostId = null;
     console.log(auth.currentUser)
 
     //If the user exists get the user data
@@ -26,7 +34,17 @@
             if(docSnap.exists()){
                 userPage = docSnap.data();
                 console.log(userPage);
+
+                if(userPage.posts && userPage.posts.length > 0){
+                    const postPromises = userPage.posts.map(async (postRef) => {
+                        const postSnap = await getDoc(postRef);
+                        return postSnap.exists() ? { id: postSnap.id, ...postSnap.data() } : null;
+                    });
+                    posts = (await Promise.all(postPromises)).filter((post) => post !== null);
+                }
             }
+
+
         } catch (e) {
             console.error(e)
         }
@@ -45,7 +63,15 @@
         }
     })
 
-    //Think about how to read posts
+    
+    function openModal(postId){
+        goto(`/user/${$page.params.userID}/posts/${postId}`, {replaceState: true});
+    }
+
+    function closeModal(){
+        showModal = false;
+        goto(`/user/${$page.params.userID}`, { replaceState: true });
+    }
 
 
 </script>
@@ -66,16 +92,20 @@
     <br>
     <h2>All posts</h2>
     <p>Goes over all the posts</p>
-    {#if userPage.posts}
+    {#if posts}
         <p>There are posts</p>
-        {#each userPage.posts as post}
-            <p>{post}</p>
+        {#each posts as post}
+            <img src={post.imageUrl} on:click={()=> openModal(post.id)} alt=""/>
         {/each}
     {:else}
         <p>No posts</p>
     {/if}
 {:else}
     <h1>This user does not exists :(</h1>
+{/if}
+
+{#if showModal}
+    <PostModal postId={currentPostId} on:close={closeModal}/>
 {/if}
 
 <style>
