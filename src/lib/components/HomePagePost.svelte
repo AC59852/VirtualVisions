@@ -145,13 +145,13 @@
     margin: 8px 0;
   }
 
-  .homePost__title {
+  /* .homePost__title {
     font-family: "Outfit", serif;
     font-optical-sizing: auto;
     font-size: 0.9rem;
     font-weight: 700;
     color: white;
-  }
+  } */
 
   .homePost__description {
     font-family: "Outfit", serif;
