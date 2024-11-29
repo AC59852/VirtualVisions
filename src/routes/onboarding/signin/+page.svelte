@@ -4,7 +4,7 @@
 	import { doc, getDoc, addDoc, setDoc, collection } from 'firebase/firestore';
 	import { goto } from '$app/navigation';
 
-    async function loginWithGoogle() {
+    async function SignInWithGoogle() {
         try{
             const provider = new GoogleAuthProvider();
 
@@ -17,7 +17,7 @@
             if (docSnap.exists()){
                 console.log("User data: ", docSnap.data());
                 // redirect to signed in page
-                goto('/signedin');
+                goto('app/signedin');
             } else{
                 await setDoc(userRef, {displayName: auth.currentUser.displayName, email:auth.currentUser.email, following: [], followingGames: [], onBoardingProcess: false, photoURL: auth.currentUser.photoURL, uid: auth.currentUser.uid})
                 goto('/onboarding');
@@ -28,10 +28,13 @@
         }
     }
 
-//<a href="/signedin"><button on:click={loginWithGoogle}>Log in with Google</button></a>
+//<a href="/signedin"><button on:click={SignInWithGoogle}>Log in with Google</button></a>
 </script>
 
-<h1>Log in</h1>
-<button on:click={loginWithGoogle}>Log in with Google</button>
+<h1>Sign in</h1>
+<button on:click={SignInWithGoogle}>Sign in with Google</button>
+
+<h1>Sign In with email and password</h1>
+
 
 <p>No account? <a href="/signup">Sign Up!</a></p>
