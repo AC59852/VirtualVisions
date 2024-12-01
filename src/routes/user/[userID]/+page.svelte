@@ -4,6 +4,7 @@
     import { page } from '$app/stores'
 	import { doc, getDoc, addDoc, setDoc, collection } from 'firebase/firestore';
 	import { onMount } from 'svelte';
+	import UserBioComponent from '../../../lib/components/user/UserBioComponent.svelte';
 
     //User ID for the user to be rendered on the page
     let userPageID = $page.params.userID 
@@ -49,44 +50,29 @@
 
 
 </script>
-{#if userPage}
-    <h1>Slug: {userPageID}</h1>
-    <h1>{userPage.displayName}</h1> 
-    {#if userPage.uid == auth.currentUser.uid}
-        <a>Edit profile</a>
-    {:else if isFollowing}
-        <p>Following</p>
+<section class="user">
+    {#if userPage}
+        <UserBioComponent user={userPage} {isFollowing} />
+        <h2>All posts</h2>
+        <p>Goes over all the posts</p>
+        {#if userPage.posts}
+            <p>There are posts</p>
+            {#each userPage.posts as post}
+                <p>{post}</p>
+            {/each}
+        {:else}
+            <p>No posts</p>
+        {/if}
     {:else}
-        <p>Not following</p>
+        <h1>This user does not exists :(</h1>
     {/if}
-
-    <p>@handle</p>
-    <p>{userPage.bioDesc}</p>
-    <p>{userPage.posts.length} posts</p><p>{userPage.followers.length} followers</p><p>following {userPage.following.length}</p>
-    <br>
-    <h2>All posts</h2>
-    <p>Goes over all the posts</p>
-    {#if userPage.posts}
-        <p>There are posts</p>
-        {#each userPage.posts as post}
-            <p>{post}</p>
-        {/each}
-    {:else}
-        <p>No posts</p>
-    {/if}
-{:else}
-    <h1>This user does not exists :(</h1>
-{/if}
+</section>
 
 <style>
-    h1{
-        color: white
+    .user {
+        display: flex;
+        flex-direction: column;
+        margin: 0 auto;
+        max-width: 939px;
     }
-    p{
-        color:white
-    }
-    a{
-        color:white
-    }
-
 </style>
