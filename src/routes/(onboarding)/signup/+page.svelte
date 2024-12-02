@@ -34,7 +34,7 @@
                     ], photoURL: "", uid: auth.currentUser.uid})
 
                     //Start onboarding process
-                    goto('/onboarding/profile');
+                    goto('/onboarding');
                 } catch(e){
                     console.error(e)
                     errorMessage = e.message;
