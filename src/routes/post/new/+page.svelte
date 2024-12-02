@@ -96,4 +96,20 @@
 
 	<button type="submit">Submit</button>
 </form>
-<img id="output" alt="Preview" />
+<img id="output" alt="Preview" class="post__preview" />
+<style>
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		justify-content: center;
+		width: 500px;
+		margin: 0 auto;
+	}
+
+	.post__preview {
+		width: 200px;
+		display: flex;
+		margin: 0 auto;
+	}
+</style>

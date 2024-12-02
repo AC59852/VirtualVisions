@@ -1,0 +1,1 @@
+<h1 style="color: white;">This is the post page</h1>

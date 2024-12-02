@@ -1,92 +1,77 @@
 <script>
-	import { auth, firestore } from '$lib/firebase';
-    import { user } from '$lib/stores/user';
-    import { page } from '$app/stores'
-	import { doc, getDoc, addDoc, setDoc, collection } from 'firebase/firestore';
-	import { onMount } from 'svelte';
+    import { pushState } from '$app/navigation';
+    import UserBioComponent from '$lib/components/user/UserBioComponent.svelte';
+	import PostComponent from '$lib/components/user/PostComponent.svelte';
+    export let data;
 
-    //User ID for the user to be rendered on the page
-    let userPageID = $page.params.userID 
-    //The data of the current user to be rendered in the page
-    let userPage = null;
-    //Var to see if the current user is following the user on the page
-    let isFollowing = null;
-    //To see if the user is logged in or a guest/anon
-    let guest = false;
+    let { user, posts, selectedPost } = data;
 
-    console.log(auth.currentUser)
+    async function openPost(post) {
+        await pushState(`/user/${user.uid}/post/${post.id}`);
+        selectedPost = post;
+    }
 
-    //If the user exists get the user data
-    onMount( async () => {
-        //Try and get the user to be rendered
-        try{
-            const userRef = doc(firestore, 'users',  $page.params.userID);
-            const docSnap = await getDoc(userRef);
-
-            if(docSnap.exists()){
-                userPage = docSnap.data();
-                console.log(userPage);
-            }
-        } catch (e) {
-            console.error(e)
-        }
-
-        //Check if the current user is following the user on the page
-        try{
-            const userRef = doc(firestore, 'users', auth.currentUser.uid);
-            const docSnap = await getDoc(userRef);
-
-            if(docSnap.exists()){
-                const curUser = docSnap.data();
-                isFollowing = curUser.following.find((u) => u == $page.params.userID);
-            }
-        } catch (e){
-            console.log(e)
-        }
-    })
-
-    //Think about how to read posts
-
-
+    async function closeModal() {
+        await pushState(`/user/${user.uid}`);
+        selectedPost = null;
+    }
 </script>
-{#if userPage}
-    <h1>Slug: {userPageID}</h1>
-    <h1>{userPage.displayName}</h1> 
-    {#if userPage.uid == auth.currentUser.uid}
-        <a>Edit profile</a>
-    {:else if isFollowing}
-        <p>Following</p>
-    {:else}
-        <p>Not following</p>
-    {/if}
 
-    <p>@handle</p>
-    <p>{userPage.bioDesc}</p>
-    <p>{userPage.posts.length} posts</p><p>{userPage.followers.length} followers</p><p>following {userPage.following.length}</p>
-    <br>
-    <h2>All posts</h2>
-    <p>Goes over all the posts</p>
-    {#if userPage.posts}
-        <p>There are posts</p>
-        {#each userPage.posts as post}
-            <p>{post}</p>
-        {/each}
+<section class="user">
+    {#if user}
+        <UserBioComponent user={user} />
+        <h2>All posts</h2>
+        {#if posts.length > 0}
+        <section class="posts">
+            {#each posts as post}
+                <a href="/user/{user.uid}/post/{post.id}"
+                   on:click={(e) => {
+                       e.preventDefault();
+                       openPost(post);
+                   }}>
+                    <PostComponent post={post} />
+                </a>
+            {/each}
+        </section>
+        {:else}
+            <p>No posts</p>
+        {/if}
     {:else}
-        <p>No posts</p>
+        <h1>This user does not exist :(</h1>
     {/if}
-{:else}
-    <h1>This user does not exists :(</h1>
+</section>
+
+{#if selectedPost}
+    <div class="modal">
+        <h1>{selectedPost.title}</h1>
+        <p>{selectedPost.body}</p>
+        <button on:click={closeModal}>Close</button>
+    </div>
 {/if}
 
 <style>
-    h1{
-        color: white
-    }
-    p{
-        color:white
-    }
-    a{
-        color:white
+    .user {
+        display: flex;
+        flex-direction: column;
+        margin: 0 auto;
+        max-width: 939px;
     }
 
+    .posts {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        width: 100%;
+        gap: 4px;
+    }
+
+    .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
 </style>

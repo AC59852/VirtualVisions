@@ -70,7 +70,7 @@
       </a>
     </li>
     <li class="menu__listItem menu__listItem--profile {currentPath === '/profile' ? 'active' : ''}">
-      <a href="/profile" class="menu__link">
+      <a href="/user/{userData?.uid}" class="menu__link">
         <img src="{userData?.photoURL}" alt="Profile icon" class="menu__photo">
         <span>Profile</span>
       </a>
