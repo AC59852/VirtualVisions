@@ -4,6 +4,8 @@
 
   // get auth
   import { auth } from '$lib/firebase';
+
+  $: auth.currentUser = auth.currentUser;
 </script>
 
 <section class="user__bio">
@@ -11,12 +13,12 @@
   <div class="user__wrapper">
     <div class="user__name">
       <h1 class="user__heading user__heading--name">{user?.displayName}</h1>
-      {#if user?.uid == auth.currentUser.uid}
-          <a href="/" class="user__edit user__heading">Edit profile</a>
+      {#if auth.currentUser && user?.uid == auth.currentUser.uid}
+        <a href="/" class="user__edit user__heading">Edit profile</a>
       {:else if isFollowing}
-          <button class="user__btn user__btn--follow">Follow <span>+</span></button>
-      {:else}
           <button class="user__btn user__btn--unfollow">Unfollow <span class="user__x">x</span></button>
+      {:else}
+          <button class="user__btn user__btn--follow">Follow <span>+</span></button>
       {/if}
     </div>
     <div class="user__info">
