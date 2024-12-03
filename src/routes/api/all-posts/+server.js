@@ -10,7 +10,11 @@ export async function GET({}) {
 		const items = [];
 
 		for (const doc of querySnapshot.docs) {
-			const item = doc.data();
+			const item = {
+				id: doc.id,
+				...doc.data()
+			}
+
 			const imagePath = item.path;
 
 			if (imagePath) {

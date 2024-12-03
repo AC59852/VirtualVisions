@@ -5,7 +5,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import allGames from '$lib/games/all-games.json'; // Import the JSON file
 import { user as currentUser } from '$lib/stores/user';
 
-export async function POST({request}) {
+export async function POST({ request }) {
     const { uid } = await request.json();
 
     console.log(uid);
@@ -24,21 +24,20 @@ export async function POST({request}) {
 
         // Fetch each followed user's data
         const followedUsersData = await Promise.all(
-          following.map(async (followedUserRef) => {
+            following.map(async (followedUserRef) => {
+                const followedUserDoc = await getDoc(followedUserRef);
 
-              const followedUserDoc = await getDoc(followedUserRef);
-
-              if (followedUserDoc.exists()) {
-                  const followedUserData = followedUserDoc.data();
-                  return {
-                      uid: followedUserDoc.id,
-                      displayName: followedUserData.displayName,
-                      photoURL: followedUserData.photoURL,
-                      postsRefs: followedUserData.posts || [], // Array of post references
-                  };
-              }
-              return null;
-          })
+                if (followedUserDoc.exists()) {
+                    const followedUserData = followedUserDoc.data();
+                    return {
+                        uid: followedUserDoc.id,
+                        displayName: followedUserData.displayName,
+                        photoURL: followedUserData.photoURL,
+                        postsRefs: followedUserData.posts || [], // Array of post references
+                    };
+                }
+                return null;
+            })
         );
 
         const validFollowedUsers = followedUsersData.filter(user => user.uid !== null);
@@ -46,56 +45,62 @@ export async function POST({request}) {
 
         // Retrieve each post document for users who have posts and attach user data
         const postsData = await Promise.all(
-          validFollowedUsers.flatMap(user => 
-              (user.postsRefs && user.postsRefs.length > 0)
-                  ? user.postsRefs.map(async (postRef) => {
-                      if (!(postRef && postRef.constructor.name === 'DocumentReference')) {
-                          console.error(`Invalid postRef in user ${user.uid}:`, postRef);
-                          return null;
-                      }
-                      const postDoc = await getDoc(postRef);
-
-                      if (postDoc.exists()) {
-                        const postData = postDoc.data();
-
-                        // process image
-                        const imagePath = postDoc.data().path;
-                        let imageUrl = '';
-
-                        if (imagePath) {
-                            try {
-                                const imageRef = ref(storage, imagePath);
-                                const url = await getDownloadURL(imageRef);
-                                imageUrl = url;
-                            } catch (error) {
-                                console.error('Error fetching image URL:', error);
-                                postDoc.data().imageUrl = '';
-                            }
+            validFollowedUsers.flatMap(user =>
+                (user.postsRefs && user.postsRefs.length > 0)
+                    ? user.postsRefs.map(async (postRef) => {
+                        if (!(postRef && postRef.constructor.name === 'DocumentReference')) {
+                            console.error(`Invalid postRef in user ${user.uid}:`, postRef);
+                            return null;
                         }
+                        const postDoc = await getDoc(postRef);
 
-                        const gameId = postData.game; // Assuming `gameId` is in post data
+                        console.log(postDoc.data());
 
-                        const game = allGames.find(game => game.id === gameId);
+                        if (postDoc.exists()) {
+                            const postData = postDoc.data();
 
-                        return { 
-                            id: postDoc.id, 
-                            ...postDoc.data(), 
-                            imageUrl,
-                            game,
-                            displayName: user.displayName,
-                            photoURL: user.photoURL 
-                        };
-                      }
-                      return null;
-                  })
-                  : []
-          )
+                            // Extract specific fields
+                            const { title, description, createdAt, likeCount, path, account } = postData;
+
+                            // Process image
+                            let imageUrl = '';
+                            if (path) {
+                                try {
+                                    const imageRef = ref(storage, path);
+                                    imageUrl = await getDownloadURL(imageRef);
+                                } catch (error) {
+                                    console.error('Error fetching image URL:', error);
+                                }
+                            }
+
+                            // Get game data
+                            const gameId = postData.game; // Assuming `gameId` is in post data
+                            const game = allGames.find(game => game.id === gameId);
+
+                            return {
+                                id: postDoc.id,
+                                title,
+                                description,
+                                createdAt,
+                                likeCount,
+                                path,
+                                account,
+                                imageUrl,
+                                game,
+                                displayName: user.displayName,
+                                photoURL: user.photoURL
+                            };
+                        }
+                        return null;
+                    })
+                    : []
+            )
         );
 
         const validPosts = postsData.filter(post => post !== null);
         console.log("Fetched posts with user data:", validPosts);
 
-        return json({ 
+        return json({
             posts: validPosts
         });
     }
