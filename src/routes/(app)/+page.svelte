@@ -2,9 +2,9 @@
 	import { auth } from '$lib/firebase';
 	import { user } from '$lib/stores/user';
 	import { onMount } from 'svelte';
-	import AllPosts from "../lib/components/AllPosts.svelte";
+	import AllPosts from "$lib/components/AllPosts.svelte";
 	import { onAuthStateChanged } from 'firebase/auth';
-	import HomePagePost from '../lib/components/HomePagePost.svelte';
+	import HomePagePost from '$lib/components/HomePagePost.svelte';
 	import { goto } from '$app/navigation';
 
 	let loggedInUser = null;

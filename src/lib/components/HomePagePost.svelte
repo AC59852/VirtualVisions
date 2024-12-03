@@ -1,14 +1,13 @@
 <script>
-  
   export let post;
 </script>
 
 <article class="homePost">
   <section class="homePost__userWrapper">
-    <div class="homePost__user">
+    <a href="/user/{post.account}" class="homePost__user">
       <img src="{post.photoURL}" alt="profile icon of user" class="homePost__profileIcon">
       <p class="homePost__profileName">{post.displayName}</p>
-    </div>
+    </a>
     <div class="homePost__settings">
       <span class="circle"></span>
       <span class="circle"></span>

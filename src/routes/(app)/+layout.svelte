@@ -3,7 +3,7 @@
 	import { onAuthStateChanged } from 'firebase/auth';
 	import { user, loading } from '$lib/stores/user';
 	import { onDestroy } from 'svelte';
-	import NavMenuComponent from '../lib/components/NavMenuComponent.svelte';
+	import NavMenuComponent from '$lib/components/NavMenuComponent.svelte';
 
 	let loggedInUser = null;
 
