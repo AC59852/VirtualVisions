@@ -1,11 +1,7 @@
 <script>
   export let user;
   export let isFollowing;
-
-  // get auth
-  import { auth } from '$lib/firebase';
-
-  $: auth.currentUser = auth.currentUser;
+  export let loggedInUser;
 </script>
 
 <section class="user__bio">
@@ -13,12 +9,17 @@
   <div class="user__wrapper">
     <div class="user__name">
       <h1 class="user__heading user__heading--name">{user?.displayName}</h1>
-      {#if auth.currentUser && user?.uid == auth.currentUser.uid}
+      <!-- Render the button only when loggedInUser is not null -->
+      {#if loggedInUser === null}
+        <p>Loading...</p>
+      {:else if loggedInUser && user?.uid === loggedInUser.uid}
         <a href="/" class="user__edit user__heading">Edit profile</a>
-      {:else if isFollowing}
+      {:else if loggedInUser}
+        {#if isFollowing}
           <button class="user__btn user__btn--unfollow">Unfollow <span class="user__x">x</span></button>
-      {:else}
+        {:else}
           <button class="user__btn user__btn--follow">Follow <span>+</span></button>
+        {/if}
       {/if}
     </div>
     <div class="user__info">
