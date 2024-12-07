@@ -2,12 +2,15 @@
 	import { pushState } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import PostComponent from "$lib/components/user/PostComponent.svelte";
+	import PostModal from "$lib/components/user/PostModal.svelte";
 	export let data;
 
 	let userData = [];
 	let { posts, selectedPost, searchQuery } = data;
 	let search = searchQuery || ''; // Initialize search with the query parameter, or empty if undefined
 	let initialSearch = search; // Track the initial search value
+	let userName;
+	let userPhoto;
 
 	// Run searchUsers only in the browser
 	onMount(() => {
@@ -61,6 +64,32 @@
 
 	async function openPost(post) {
 		await pushState(`/user/${post.account}/post/${post.id}`);
+
+		try {
+			const response = await fetch(`/api/get-user`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ uid: post.account })
+			});
+
+			const result = await response.json();
+
+			if (response.ok) {
+				console.log('User:', result);
+				userName = result.user.displayName;
+				userPhoto = result.user.photoURL;
+			} else {
+				console.error('Error getting user:', result.error);
+			}
+		}
+		catch (error) {
+			console.error('Error getting user:', error);
+		}
+
+
+
+		console.log(post)
+
 		selectedPost = post;
 	}
 
@@ -98,11 +127,7 @@
 		{/if}
 
 		{#if selectedPost}
-			<div class="modal">
-				<h1>{selectedPost.title}</h1>
-				<p>{selectedPost.body}</p>
-				<button on:click={closeModal}>Close</button>
-			</div>
+			<PostModal post={selectedPost} userName={userName} userPhoto={userPhoto} on:close={closeModal} />
 		{/if}
 	{/if}
 </section>

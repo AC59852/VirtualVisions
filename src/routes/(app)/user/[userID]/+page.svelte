@@ -1,25 +1,35 @@
 <script>
+  import { onDestroy } from 'svelte';
   import { pushState } from '$app/navigation';
   import UserBioComponent from '$lib/components/user/UserBioComponent.svelte';
   import PostComponent from '$lib/components/user/PostComponent.svelte';
+	import PostModal from '$lib/components/user/PostModal.svelte';
   export let data;
 
-  let { user, posts, selectedPost } = data;
+  let { user, posts, selectedPost, loggedInUser } = data;
 
-  async function openPost(post) {
-    await pushState(`/user/${user.uid}/post/${post.id}`);
+  async function openModal(post) {
+    pushState(`/user/${user.uid}/post/${post.id}`);
     selectedPost = post;
   }
 
   async function closeModal() {
-    await pushState(`/user/${user.uid}`);
+    pushState(`/user/${user.uid}`);
     selectedPost = null;
   }
+
+  // Reactively update state when `data` changes (e.g., new `user`, `posts`, etc.)
+  $: ({ user, posts, selectedPost, loggedInUser } = data);
+
+  // Cleanup modal on destruction
+  onDestroy(() => {
+    selectedPost = null;
+  });
 </script>
 
 <section class="user">
   {#if user}
-    <UserBioComponent user={user} />
+    <UserBioComponent user={user} loggedInUser={loggedInUser} />
     <h2>All posts</h2>
     {#if posts.length > 0}
       <section class="posts">
@@ -27,7 +37,7 @@
           <a href="/user/{user.uid}/post/{post.id}"
             on:click={(e) => {
               e.preventDefault();
-              openPost(post);
+              openModal(post);
           }}>
               <PostComponent post={post} />
           </a>
@@ -42,11 +52,13 @@
 </section>
 
 {#if selectedPost}
-  <div class="modal">
-      <h1>{selectedPost.title}</h1>
-      <p>{selectedPost.body}</p>
-      <button on:click={closeModal}>Close</button>
-  </div>
+  <PostModal 
+    post={selectedPost} 
+    on:close={closeModal} 
+    userName={user?.displayName} 
+    userPhoto={user?.photoURL}
+    userUid={user?.uid}
+  />
 {/if}
 
 <style>
@@ -62,16 +74,5 @@
     grid-template-columns: repeat(3, 1fr);
     width: 100%;
     gap: 4px;
-  }
-
-  .modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
   }
 </style>
