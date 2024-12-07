@@ -14,16 +14,27 @@
   onMount(() => {
     console.log(post)
   })
+
+  // convert the post.likeCount to a rounded number and add either a K or M if it's over 1000 but if its 0 dont show it
+  if(post.likeCount == 0 || post.likeCount == undefined) {
+    post.likeCount = '';
+  }
+
+  post.likeCount = post.likeCount > 999 ? post.likeCount > 999999 ? `${Math.round(post.likeCount / 1000000)}M` : `${Math.round(post.likeCount / 1000)}K` : post.likeCount;
 </script>
 
 <section class="modal">
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div class="modal__bck" on:click={close}></div>
   <button on:click={close} class="modal__close">X Close</button>
   <div class="modal__wrapper">
-    <div class="modal__user">
-      <img src={userPhoto} alt={userName} class="modal__profileImg"/>
-      <h3 class="modal__profileName">{userName}</h3>
-    </div>
+    <button class="modal__user" on:click={close}>
+      <a href="/user/{post.account}"><img src={userPhoto} alt={userName} class="modal__profileImg"/></a>
+      <a href="/user/{post.account}">
+        <h3 class="modal__profileName">{userName}</h3>
+      </a>
+    </button>
     <img src={post.path || post.imageUrl} alt={post.title} />
     <div class="modal__social">
       <div class="modal__btns">
@@ -32,11 +43,11 @@
       </div>
       <div class="modal__likes">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart modal__icon modal__icon--like"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-        <span class="modal__likeNumber">13k</span>
+        <span class="modal__likeNumber">{post.likeCount}</span>
       </div>
     </div>
     <h2 class="post__title">{post.title}</h2>
-    <p class="post__description">{post.description}</p>
+    <p class="post__description">{post.description || post.content}</p>
   </div>
 </section>
 
@@ -87,6 +98,9 @@
     align-items: center;
     gap: 7px;
     margin-bottom: 1rem;
+    background-color: transparent;
+    border: none;
+    text-decoration: none;
   }
 
   .modal__profileImg {
@@ -134,5 +148,17 @@
     font-family: "Outfit", serif;
     width: 65%;
     line-height: 1.2;
+  }
+
+  .modal__likes {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .modal__likeNumber {
+    color: white;
+    font-family: "Outfit", serif;
+    font-size: 0.75rem;
   }
 </style>

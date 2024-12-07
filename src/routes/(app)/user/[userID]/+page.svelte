@@ -52,7 +52,13 @@
 </section>
 
 {#if selectedPost}
-  <PostModal post={selectedPost} on:close={closeModal} userName={user?.displayName} userPhoto={user?.photoURL} />
+  <PostModal 
+    post={selectedPost} 
+    on:close={closeModal} 
+    userName={user?.displayName} 
+    userPhoto={user?.photoURL}
+    userUid={user?.uid}
+  />
 {/if}
 
 <style>
