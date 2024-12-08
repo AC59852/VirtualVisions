@@ -2,16 +2,25 @@
 	import { onMount } from 'svelte';
 	import { authStore } from '$lib/stores/user';
 	import { auth, firestore } from '$lib/firebase';
+	import { onAuthStateChanged } from 'firebase/auth';
 	import { collection, addDoc, arrayUnion, doc, updateDoc } from 'firebase/firestore';
 	import { get } from 'svelte/store';
 	import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 	import allGames from '$lib/games/all-games.json';
 	let games = allGames;
 
-	console.log(games);
+	onMount(() => {
+		onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				console.log("test")
+			}
+		});
+	});
 
 	async function createPost(event) {
 		event.preventDefault();
+
+		console.log(authStore.currentUser);
 
 		const formData = new FormData(event.target);
 		const imageFile = formData.get('image'); // Get the file object
