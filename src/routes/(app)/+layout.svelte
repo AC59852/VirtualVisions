@@ -1,7 +1,6 @@
 <script>
   import { auth } from '$lib/firebase';
   import { authStore } from '$lib/stores/user';
-  import { onAuthStateChanged } from 'firebase/auth';
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
   import NavMenuComponent from '$lib/components/NavMenuComponent.svelte';

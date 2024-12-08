@@ -1,5 +1,12 @@
 <script>
   export let post;
+
+  async function likePost() {
+    await fetch('/api/like-post', {
+      method: 'PUT',
+      body: JSON.stringify({ postId: post.id }),
+    })
+  }
 </script>
 
 <article class="homePost">
@@ -22,10 +29,11 @@
           <div class="homePost__share">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2 homePost__icon homePost__icon--share"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
           </div>
-          <div class="homePost__likes">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart homePost__icon homePost__icon--like"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          <button class="homePost__likes" on:click={likePost}>
+            <svg xmlns="http://www.w3.org/2000/svg"
+              width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart homePost__icon homePost__icon--like"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
             <span class="homePost__likeNumber">13k</span>
-          </div>
+          </button>
         </div>
         <p class="homePost__game">{post.game.name}</p>
       </div>
@@ -104,7 +112,7 @@
   .homePost__btns {
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 2px;
   }
 
   .homePost__icon {
@@ -122,6 +130,9 @@
     display: flex;
     align-items: center;
     gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
   }
 
   .homePost__likeNumber {

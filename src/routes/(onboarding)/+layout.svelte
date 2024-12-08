@@ -1,16 +1,14 @@
 <script>
 	import { auth } from '$lib/firebase';
 	import { authStore } from '$lib/stores/user';
-	import { onAuthStateChanged } from 'firebase/auth';
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
-	let authInitialized = false; // Track if auth is fully initialized
-
 	onMount(() => {
 		const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      console.log(user);
+      console.log("user: ", user);
       authStore.update((current) => {
+					console.log("updating")
           return {...current, isLoading: false, currentUser: user};
       });
 
