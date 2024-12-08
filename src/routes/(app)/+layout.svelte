@@ -1,30 +1,32 @@
 <script>
-	import { auth } from '$lib/firebase';
-	import { onAuthStateChanged } from 'firebase/auth';
-	import { user, loading } from '$lib/stores/user';
-	import { onDestroy } from 'svelte';
-	import NavMenuComponent from '$lib/components/NavMenuComponent.svelte';
+  import { auth } from '$lib/firebase';
+  import { authStore } from '$lib/stores/user';
+  import { onAuthStateChanged } from 'firebase/auth';
+  import { browser } from '$app/environment';
+  import { onMount } from 'svelte';
+  import NavMenuComponent from '$lib/components/NavMenuComponent.svelte';
 
-	let loggedInUser = null;
+  onMount(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      console.log(user);
+      authStore.update((current) => {
+        return { ...current, currentUser: user, isLoading: false };
+      });
 
-	// Set up the authentication state listener globally
-	const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-		user.set(currentUser); // Update the user store
-		loading.set(false); // Stop loading once the state is known
-		console.log('User state changed:', currentUser);
+      // Check for authentication state and redirect if needed
+      if (browser && !user && !authStore.isLoading && window.location.pathname === '/') {
+        console.log(authStore.currentUser, authStore.isLoading);
+        window.location.href = '/signin';
+      }
+    });
 
-		if (currentUser) {
-			loggedInUser = currentUser.uid;
-		}
-	});
-
-	// Cleanup listener when layout is destroyed (optional)
-	onDestroy(() => {
-		unsubscribe();
-		console.log('Auth listener unsubscribed');
-	});
+    return unsubscribe;
+  });
 </script>
 
-<NavMenuComponent user={loggedInUser} />
-<slot />
-<!-- Render child routes -->
+{#if authStore.isLoading || !$authStore.currentUser}
+  <div>Loading...</div>
+{:else}
+  <NavMenuComponent user={$authStore?.currentUser?.uid} />
+  <slot />
+{/if}
