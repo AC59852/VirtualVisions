@@ -1,24 +1,11 @@
 <script>
 	import { onMount } from 'svelte';
-	import { user } from '$lib/stores/user';
+	import { authStore } from '$lib/stores/user';
 	import { auth, firestore } from '$lib/firebase';
 	import { collection, addDoc, arrayUnion, doc, updateDoc } from 'firebase/firestore';
 	import { get } from 'svelte/store';
 	import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 	import allGames from '$lib/games/all-games.json';
-
-	onMount(() => {
-		const unsubscribeAuth = auth.onAuthStateChanged((firebaseUser) => {
-			if (!firebaseUser || !get(user) || get(user).uid !== firebaseUser.uid) {
-				location.href = '/login';
-			} else {
-				console.log('User is logged in:', firebaseUser);
-			}
-		});
-
-		return () => unsubscribeAuth();
-	});
-
 	let games = allGames;
 
 	console.log(games);
@@ -37,7 +24,7 @@
 		})
 
 		// Define the path for the image in the root folder
-		const imagePath = `${get(user).uid}/${imageFile.name}`;
+		const imagePath = `${get(authStore.currentUser).uid}/${imageFile.name}`;
 
 		// Upload the image to Firebase Storage
 		const storage = getStorage();
@@ -53,7 +40,7 @@
 			title: formData.get('title'),
 			description: formData.get('description'),
 			path: downloadURL, // Save the public URL
-			account: get(user).uid,
+			account: get(authStore.currentUser).uid,
 			createdAt: new Date().toISOString()
 		};
 
@@ -62,7 +49,7 @@
 		console.log('Document written with ID:', postRef.id);
 
 		// Update the user's post array in Firestore
-		const userRef = doc(collection(firestore, 'users'), get(user).uid);
+		const userRef = doc(collection(firestore, 'users'), get(authStore.currentUser).uid);
 		await updateDoc(userRef, {
 			posts: arrayUnion(postRef)
 		});
