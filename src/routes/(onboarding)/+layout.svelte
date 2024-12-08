@@ -1,30 +1,28 @@
 <script>
 	import { auth } from '$lib/firebase';
-	import { onAuthStateChanged } from 'firebase/auth';
-	import { user, loading } from '$lib/stores/user';
-	import { onDestroy } from 'svelte';
-  import { goto } from '$app/navigation';
+	import { authStore } from '$lib/stores/user';
+	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
 
-	let loggedInUser = null;
+	onMount(() => {
+		const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      console.log("user: ", user);
+      authStore.update((current) => {
+					console.log("updating")
+          return {...current, isLoading: false, currentUser: user};
+      });
 
-	// Set up the authentication state listener globally
-	const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-		user.set(currentUser); // Update the user store
-		loading.set(false); // Stop loading once the state is known
-		console.log('User state changed:', currentUser);
-
-		if (currentUser) {
-			loggedInUser = currentUser.uid;
-
-      goto('/');
-		}
-	});
-
-	// Cleanup listener when layout is destroyed (optional)
-	onDestroy(() => {
-		unsubscribe();
-		console.log('Auth listener unsubscribed');
+			if(browser && !$authStore?.currentUser && !$authStore.isLoading && window.location.pathname === '/') {
+				console.log(authStore.currentUser, authStore.isLoading);
+				// window.location.href = '/signin';
+			}
+  	});
+		return unsubscribe;
 	});
 </script>
-<slot />
-<!-- Render child routes -->
+
+{#if authStore.isLoading}
+	<div>Loading...</div>
+{:else}
+	<slot />
+{/if}

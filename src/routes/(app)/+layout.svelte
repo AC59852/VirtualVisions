@@ -1,30 +1,38 @@
 <script>
-	import { auth } from '$lib/firebase';
-	import { onAuthStateChanged } from 'firebase/auth';
-	import { user, loading } from '$lib/stores/user';
-	import { onDestroy } from 'svelte';
-	import NavMenuComponent from '$lib/components/NavMenuComponent.svelte';
+  import { auth } from '$lib/firebase';
+  import { authStore } from '$lib/stores/user';
+  import { browser } from '$app/environment';
+  import { onMount } from 'svelte';
+  import NavMenuComponent from '$lib/components/NavMenuComponent.svelte';
+  import { get } from 'svelte/store';
 
-	let loggedInUser = null;
+  // Update authStore on auth state changes
+  onMount(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      authStore.update((current) => ({
+        ...current,
+        currentUser: user,
+        isLoading: false,
+      }));
+    });
 
-	// Set up the authentication state listener globally
-	const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-		user.set(currentUser); // Update the user store
-		loading.set(false); // Stop loading once the state is known
-		console.log('User state changed:', currentUser);
+    return unsubscribe;
+  });
 
-		if (currentUser) {
-			loggedInUser = currentUser.uid;
-		}
-	});
-
-	// Cleanup listener when layout is destroyed (optional)
-	onDestroy(() => {
-		unsubscribe();
-		console.log('Auth listener unsubscribed');
-	});
+  // Reactive block for handling redirection
+  $: {
+    if (browser && !$authStore.isLoading) {
+      if (!$authStore.currentUser && ['/post/new', '/'].includes(window.location.pathname)) {
+        console.log("Redirecting to /signin...");
+        window.location.href = '/signin';
+      }
+    }
+  }
 </script>
 
-<NavMenuComponent user={loggedInUser} />
-<slot />
-<!-- Render child routes -->
+{#if $authStore.isLoading}
+  <div>Loading...</div>
+{:else}
+  <NavMenuComponent user={$authStore.currentUser?.uid} />
+  <slot />
+{/if}

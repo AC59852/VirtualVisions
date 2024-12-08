@@ -1,38 +1,65 @@
 <script>
 	import { auth, firestore } from '$lib/firebase';
-	import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-	import { doc, getDoc, addDoc, setDoc, collection } from 'firebase/firestore';
+	import { GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
+	import { doc, getDoc, setDoc, collection, addDoc } from 'firebase/firestore';
 	import { goto } from '$app/navigation';
 
-    async function SignInWithGoogle() {
-        try{
-            const provider = new GoogleAuthProvider();
+	// Generic sign-in function
+	async function signInWithProvider(provider) {
+		try {
+			// Sign in with the provided auth provider
+			await signInWithPopup(auth, provider);
 
-            await signInWithPopup(auth,provider);
+			// Create or fetch user profile
+			const userRef = doc(firestore, 'users', auth.currentUser.uid);
+			const docSnap = await getDoc(userRef);
 
-            //Create user profile with google sign in
-            const userRef = doc(firestore, 'users', auth.currentUser.uid);
-            const docSnap = await getDoc(userRef);
+			if (docSnap.exists()) {
+				console.log("User data: ", docSnap.data());
+				goto('/');
+			} else {
+				// Create new user document
+				await setDoc(userRef, {
+					displayName: auth.currentUser.displayName,
+					following: 0,
+					followingGames: [],
+					isOnboarded: false,
+					photoURL: auth.currentUser.photoURL,
+					uid: auth.currentUser.uid,
+					description: '',
+					posts: [],
+				});
 
-            if (docSnap.exists()){
-                console.log("User data: ", docSnap.data());
-                // redirect to signed in page
-                goto('app/signedin');
-            } else{
-                await setDoc(userRef, {displayName: auth.currentUser.displayName, email:auth.currentUser.email, following: [], followingGames: [], onBoardingProcess: false, photoURL: auth.currentUser.photoURL, uid: auth.currentUser.uid})
-                goto('/onboarding');
-            }
+				// Create sub-collections
+				const followersRef = collection(firestore, `users/${auth.currentUser.uid}/followers`);
+				const followingRef = collection(firestore, `users/${auth.currentUser.uid}/following`);
 
-        } catch (e){
-            console.log(e);
-        }
-    }
+				await addDoc(followersRef, { placeholder: true }); // Optional
+				await addDoc(followingRef, { placeholder: true }); // Optional
 
-//<a href="/signedin"><button on:click={SignInWithGoogle}>Log in with Google</button></a>
+				goto('/onboarding');
+			}
+		} catch (e) {
+			console.error("Error during sign-in: ", e);
+		}
+	}
+
+	// Functions for specific providers
+	function signInWithGoogle() {
+		const provider = new GoogleAuthProvider();
+		signInWithProvider(provider);
+	}
+
+	function signInWithFacebook() {
+		const provider = new FacebookAuthProvider();
+    provider.addScope('public_profile'); 
+		signInWithProvider(provider);
+	}
 </script>
 
 <h1>Sign in</h1>
-<button on:click={SignInWithGoogle}>Sign in with Google</button>
+<button on:click={signInWithGoogle}>Sign in with Google</button>
+<button on:click={signInWithFacebook}>Sign in with Facebook</button>
 
 <h1>Sign In with email and password</h1>
 

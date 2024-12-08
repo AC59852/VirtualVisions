@@ -1,25 +1,23 @@
 <script>
 	import { auth } from '$lib/firebase';
-	import { user } from '$lib/stores/user';
+	import { authStore } from '$lib/stores/user';
 	import { onMount } from 'svelte';
 	import AllPosts from "$lib/components/AllPosts.svelte";
-	import { onAuthStateChanged } from 'firebase/auth';
 	import HomePagePost from '$lib/components/HomePagePost.svelte';
-	import { goto } from '$app/navigation';
+	import { onAuthStateChanged } from 'firebase/auth';
 
-	let loggedInUser = null;
 	let posts = [];
 	let userData;
 	let loading = true; // Track loading state
 
-	async function fetchUserHomePosts() {
+	async function fetchUserHomePosts(userId) {
 		try {
 			const response = await fetch('/api/user-posts', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ uid: loggedInUser.uid })
+				body: JSON.stringify({ uid: userId })
 			});
 			let data = await response.json();
 			posts = data.posts;
@@ -30,16 +28,19 @@
 		}
 	}
 
-	async function getUser() {
+	async function getUser(userId) {
+		console.log(userId)
 		try {
 			const response = await fetch('/api/get-user', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ uid: loggedInUser.uid })
+				body: JSON.stringify({ uid: userId })
 			});
 			let data = await response.json();
+
+			console.log(data)
 
 			userData = data.user;
 		} catch (error) {
@@ -48,24 +49,10 @@
 	}
 
 	onMount(() => {
-		onAuthStateChanged(auth, (currentUser) => {
-			if (currentUser) {
-				// get the user from store
-				user.subscribe((value) => {
-					// compare the user.uid with the currentUser.uid
-					if (value && value.uid === currentUser.uid) {
-						console.log("user validated");
-						loggedInUser = currentUser;
-						fetchUserHomePosts();
-						getUser();
-					} else {
-						loggedInUser = null;
-						goto('/login');
-						return;
-					}
-				});
-			} else {
-				loading = false; // Stop loading if no user is logged in
+		onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				await fetchUserHomePosts(user.uid);
+				await getUser(user.uid);
 			}
 		});
 	});
@@ -96,7 +83,7 @@
 				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="home__post"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
 			</a>
 		</section>
-		{#if loggedInUser}
+		{#if posts.length > 0}
 			{#each posts as item}
 				<HomePagePost post={item} />
 			{/each}
