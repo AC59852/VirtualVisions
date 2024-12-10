@@ -30,7 +30,7 @@
   }
 </script>
   
-  <section class="onboarding" on:submit={nextForm}>
+  <section class="onboarding__wrapper" on:submit={nextForm}>
     {#if currentForm.complete === false}
       {#if currentForm.id === 1}
         <OnboardingProfileFormComponent {currentForm} />
@@ -47,7 +47,7 @@
     {/if}
 
   <style>
-    .onboarding {
+    .onboarding__wrapper {
       position: absolute;
       top: 50%;
       left: 50%;

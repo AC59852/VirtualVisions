@@ -24,5 +24,27 @@
 {#if authStore.isLoading}
 	<div>Loading...</div>
 {:else}
-	<slot />
+	<section class="onboarding">
+		<img src="/bck.webp" alt="" class="onboarding__bck">
+		<slot />
+	</section>
 {/if}
+<style>
+	.onboarding {
+		position: relative;
+		min-height: 100vh;
+		overflow: hidden;
+	}
+	.onboarding__bck {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		filter: blur(10px) brightness(0.8);
+		z-index: -1;
+		transform: scale(1.1);
+		object-position: center;
+	}
+</style>
