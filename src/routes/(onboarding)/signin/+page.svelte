@@ -27,13 +27,16 @@
 				// Create new user document
 				await setDoc(userRef, {
 					displayName: auth.currentUser.displayName,
-					following: 0,
-					followingGames: [],
+					description: '',
+					email: auth.currentUser.email,
+					followers: [],
+					following: [],
+					games: [],
 					isOnboarded: false,
 					photoURL: auth.currentUser.photoURL,
 					uid: auth.currentUser.uid,
-					description: '',
 					posts: [],
+					createdAt: new Date().toISOString(),
 				});
 
 				// Create sub-collections
