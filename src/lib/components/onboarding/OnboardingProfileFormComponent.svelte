@@ -34,7 +34,7 @@
   }
 
   async function uploadPhoto(file) {
-      const filename = 'profilePhotos/' + file.name;
+      const filename = `${auth.currentUser.uid}/profile-photo/${file.name}`;
       const storageRef = ref(storage, filename);
 
       try {
@@ -69,7 +69,7 @@
   }
 </script>
 
-<form class="onboarding__form onboarding__form--profile">
+<form class="onboarding__form onboarding__form--profile" on:submit={submitOnboardingProfile}>
   <h1 class="onboarding__heading">Profile</h1>
 
   <!-- Middle row for the image and display name input -->

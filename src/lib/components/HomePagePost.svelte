@@ -1,11 +1,31 @@
 <script>
+  import { auth } from '$lib/firebase';
   export let post;
+  export let userLikes;
+
+  console.log(userLikes)
 
   async function likePost() {
+
+    const user = await auth.currentUser
+
     await fetch('/api/like-post', {
       method: 'PUT',
-      body: JSON.stringify({ postId: post.id }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        postId: post.id,
+        userId: user.uid,
+       })
     })
+
+    // if the post is liked, unlike it
+    if (userLikes) {
+      userLikes = false
+    } else {
+      userLikes = true
+    }
   }
 </script>
 
@@ -31,7 +51,8 @@
           </div>
           <button class="homePost__likes" on:click={likePost}>
             <svg xmlns="http://www.w3.org/2000/svg"
-              width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart homePost__icon homePost__icon--like"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              width="24" height="24" viewBox="0 0 24 24" fill={userLikes ? 'white' : 'none'} stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart homePost__icon homePost__icon--like"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
             <span class="homePost__likeNumber">13k</span>
           </button>
         </div>

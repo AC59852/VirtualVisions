@@ -9,6 +9,8 @@
   // Update authStore on auth state changes
   onMount(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
+      console.log('User state changed:', user);
+
       authStore.update((current) => ({
         ...current,
         currentUser: user,

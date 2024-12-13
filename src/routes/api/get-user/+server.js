@@ -21,7 +21,8 @@ export async function POST({request}) {
             user: {
                 displayName: userDoc.data().displayName,
                 photoURL: userDoc.data().photoURL,
-                uid
+                uid,
+                likedPosts: userDoc.data().likedPosts || []
             } 
         });
     }
