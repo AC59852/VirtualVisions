@@ -1,9 +1,15 @@
 <script>
   import gamesList from '$lib/games/all-games.json';
   import Svelecte from 'svelecte';
+  import { auth, firestore } from '$lib/firebase';
+  import { doc, updateDoc } from 'firebase/firestore';
+  import { createEventDispatcher } from 'svelte';
 
   let currentGames = []; // Reactive variable for selected games
   let currentGame = null; // Bound to Svelecte
+  let userRef = null;
+
+  const dispatch = createEventDispatcher();
 
   // Prevent Svelecte from routing or modifying the URL
   function gameListHandler(event) {
@@ -31,15 +37,32 @@
   function removeGame(game) {
     currentGames = currentGames.filter((g) => g !== game);
   }
+
+
+  // Submit the selected games
+  function submitOnboardingGames() {
+    try {
+      userRef = doc(firestore, `users/${auth.currentUser.uid}`);
+      updateDoc(userRef, { games: currentGames });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  // Go back to the previous form
+  function backstepForm() {
+    dispatch('backstep');
+  }
+
 </script>
 
-<form class="onboarding__form">
+<form class="onboarding__form" on:submit={submitOnboardingGames}>
   <h1 class="onboarding__heading">Games</h1>
 
   <div class="onboarding__center">
     <ul class="onboarding__list">
       {#if currentGames.length === 0}
-        <li class="onboarding__listItem onboarding__listItem--empty">Choose your games</li>
+        <li class="onboarding__listItem onboarding__listItem--empty">Choose your games below</li>
       {:else}
         {#each currentGames as game}
           <li class="onboarding__listItem">
@@ -67,7 +90,7 @@
   </div>
   
   <div class="onboarding__btns">
-    <button type="button" class="onboarding__btn onboarding__btn--back">Back</button>
+    <button type="button" class="onboarding__btn onboarding__btn--back" on:click={backstepForm}>Back</button>
     <button type="submit" class="onboarding__btn onboarding__btn--next">Next</button>
   </div>
 </form>

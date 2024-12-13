@@ -5,6 +5,7 @@
   import { onMount } from 'svelte';
   import NavMenuComponent from '$lib/components/NavMenuComponent.svelte';
   import { signOut } from 'firebase/auth';
+  import { goto } from '$app/navigation';
 
   // Update authStore on auth state changes
   onMount(() => {
@@ -32,15 +33,15 @@
   }
 
   async function VVSignOut() {
-		try {
-			await signOut(auth); // Perform the sign-out
-			authStore.currentUser.set(null); // Clear the user store immediately
-			console.log('User signed out');
-      goto('/signin')
-		} catch (e) {
-			console.error('Sign out error:', e);
-		}
-	}
+  try {
+    await signOut(auth); // Perform the sign-out
+    authStore.set({ currentUser: null, isLoading: false }); // Clear the user store immediately
+    console.log('User signed out');
+    goto('/signin');
+  } catch (e) {
+    console.error('Sign out error:', e);
+  }
+}
 </script>
 
 {#if $authStore.isLoading}

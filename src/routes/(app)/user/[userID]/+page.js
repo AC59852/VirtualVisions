@@ -33,6 +33,8 @@ export async function load({ params, fetch }) {
           });
         });
     }
+
+    console.log(data.user)
   
     return {
       user: data.user,

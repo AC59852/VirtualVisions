@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import PostComponent from "$lib/components/user/PostComponent.svelte";
 	import PostModal from "$lib/components/user/PostModal.svelte";
+	import UserFollowComponent from '../../../lib/components/user/UserFollowComponent.svelte';
 	export let data;
 
 	let userData = [];
@@ -105,10 +106,14 @@
 	</form>
 
 	{#if userData !== undefined && userData.length > 0}
-		<h2 class="explore__title explore__title--search">Search results for: {search}</h2>
-		{#each userData as user}
-			<a href="/user/{user.uid}">{user.displayName}</a>
-		{/each}
+		<section class="explore__wrapper">
+			<h2 class="explore__title explore__title--search">Search results for: {search}</h2>
+			<section class="explore__users">
+				{#each userData as user}
+					<UserFollowComponent user={user} />
+				{/each}
+			</section>
+		</section>
 	{/if}
 
 	<!-- hide explore if the user searched for someone -->
@@ -160,6 +165,7 @@
 		font-size: 3.25rem;
 		color: white;
 		font-weight: bold;
+		margin-left: -3rem;
 	}
 
 	.explore__title--main {
@@ -173,14 +179,16 @@
 		gap: 4px;
 	}
 
-	.modal {
-		position: fixed;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		background: white;
-		padding: 20px;
-		box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-		z-index: 1000;
+	.explore__wrapper {
+		position: relative;
+	}
+
+	.explore__users {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 3rem;
+		width: 100%;
+		margin-top: 3rem;
 	}
 </style>
