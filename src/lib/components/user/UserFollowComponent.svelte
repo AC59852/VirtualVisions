@@ -47,7 +47,7 @@
   }
 
   .follows__photo {
-    height: 90%;
+    height: 80%;
     object-fit: cover;
   }
 
@@ -69,7 +69,7 @@
   }
 
   .follows__heading {
-    font-size: 3.25rem;
+    font-size: 3rem;
     font-weight: bold;
   }
 
@@ -102,13 +102,13 @@
 
   .follows__link {
     color: white;
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 600;
     text-decoration: none;
   }
   
   .follows__description {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 400;
     width: 75%;
     line-height: 120%;

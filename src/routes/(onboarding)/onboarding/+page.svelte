@@ -1,4 +1,9 @@
 <script>
+  import { auth, firestore } from '$lib/firebase';
+  import { authStore } from '$lib/stores/user';
+  import { signOut } from 'firebase/auth';
+  import { doc, getDoc, addDoc, setDoc, updateDoc, collection } from 'firebase/firestore';
+  import {goto} from '$app/navigation';
   import OnboardingProfileFormComponent from '$lib/components/onboarding/OnboardingProfileFormComponent.svelte';
   import OnboardingGamesFormComponent from '$lib/components/onboarding/OnboardingGamesFormComponent.svelte';
 
@@ -26,6 +31,21 @@
         id: 0,
         complete: true
       }
+
+      let userRef = doc(firestore, `users/${auth.currentUser.uid}`);
+
+      updateDoc(userRef, { isOnboarded: true });
+    }
+  }
+
+  async function VVSignOut() {
+    try {
+      await signOut(auth); // Perform the sign-out
+      authStore.set({ currentUser: null, isLoading: false }); // Clear the user store immediately
+      console.log('User signed out');
+      goto('/signin');
+    } catch (e) {
+      console.error('Sign out error:', e);
     }
   }
 </script>
@@ -36,7 +56,10 @@
         <OnboardingProfileFormComponent {currentForm} />
       {/if}
       {#if currentForm.id === 2}
-        <OnboardingGamesFormComponent {currentForm} />
+        <OnboardingGamesFormComponent {currentForm} on:backstep={() => {
+          console.log("test")
+          currentForm = onboardingForms[0];
+        }} />
       {/if}
     {/if}
   </section>
@@ -48,8 +71,8 @@
           <div class="onboarding__center">
             <p class="onboarding__text onboarding__text--enjoy">Enjoy VirtualVisions!</p>
             <div class="onboarding__btns">
-              <button type="button" class="onboarding__btn onboarding__btn--back">Logout</button>
-              <button type="button" class="onboarding__btn onboarding__btn--next">Enter</button>
+              <button type="button" class="onboarding__btn onboarding__btn--back" on:click={VVSignOut}>Logout</button>
+              <button type="button" class="onboarding__btn onboarding__btn--next" on:click={() => goto('/')}>Enter</button>
             </div>
           </div>
           <p class="onboarding__text onboarding__text--signup">Thank you for signing up!</p>

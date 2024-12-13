@@ -1,7 +1,10 @@
 <script>
   import { auth, firestore } from '$lib/firebase';
+  import { authStore } from '$lib/stores/user';
+  import { signOut } from 'firebase/auth';
+  import { goto } from '$app/navigation';
   import { doc, getDoc, addDoc, setDoc, updateDoc, collection } from 'firebase/firestore';
-  import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+  import { getStorage, ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
 
   let displayName = "";
   let photoUpload = "";
@@ -25,29 +28,47 @@
 
   async function setDisplayName(name) {
       try {
-          if (name != "") {
-              await updateDoc(userRef, { displayName: name });
-          }
+          userRef = doc(firestore, `users/${auth.currentUser.uid}`);
+
+          await updateDoc(userRef, { displayName: name });
       } catch (e) {
           console.error(e);
       }
   }
 
   async function uploadPhoto(file) {
-      const filename = `${auth.currentUser.uid}/profile-photo/${file.name}`;
-      const storageRef = ref(storage, filename);
+    const userUid = auth.currentUser.uid;
+    const filename = `${userUid}/profile-photo/${file.name}`;
+    const storageRef = ref(storage, filename);
 
-      try {
-          uploadBytes(storageRef, file).then((snapshot) => {
-              console.log("File uploaded!");
-          });
+    try {
+        // Get the list of all files in the user's profile-photo folder
+        const profilePhotoFolderRef = ref(storage, `${userUid}/profile-photo/`);
+        const res = await listAll(profilePhotoFolderRef);
 
-          const uploadedPhotoURL = await getDownloadURL(storageRef);
-          await updateDoc(userRef, { photoURL: uploadedPhotoURL });
-      } catch (e) {
-          console.error(e);
-      }
-  }
+        // If there are existing photos, delete them
+        if (res.items.length > 0) {
+            for (const itemRef of res.items) {
+                await deleteObject(itemRef);
+                console.log(`Old photo deleted: ${itemRef.fullPath}`);
+            }
+        }
+
+        // Upload the new file to Firebase Storage
+        const uploadTaskSnapshot = await uploadBytes(storageRef, file);
+        console.log("File uploaded!");
+
+        // Get the download URL of the uploaded file
+        const uploadedPhotoURL = await getDownloadURL(storageRef);
+        console.log("Uploaded photo URL:", uploadedPhotoURL);
+
+        // Update the user's Firestore document with the new photo URL
+        await updateDoc(userRef, { photoURL: uploadedPhotoURL });
+        console.log("Photo URL updated in Firestore.");
+    } catch (e) {
+        console.error(e);
+    }
+}
 
   function previewImage(event) {
       file = event.target.files[0];
@@ -66,6 +87,17 @@
 
     const fileInput = document.getElementById('profilePhoto');
     fileInput.click(); // Programmatically trigger the file input's click event
+  }
+
+  async function VVSignOut() {
+    try {
+      await signOut(auth); // Perform the sign-out
+      authStore.set({ currentUser: null, isLoading: false }); // Clear the user store immediately
+      console.log('User signed out');
+      goto('/signin');
+    } catch (e) {
+      console.error('Sign out error:', e);
+    }
   }
 </script>
 
@@ -89,8 +121,8 @@
 
   <!-- Bottom row for the button -->
   <div class="onboarding__btns">
-    <button class="onboarding__btn onboarding__btn--back">Back</button>
-    <button class="onboarding__btn onboarding__btn--next">Next</button>
+    <button class="onboarding__btn onboarding__btn--back" type="button" on:click={VVSignOut}>Back</button>
+    <button class="onboarding__btn onboarding__btn--next" type="submit">Next</button>
   </div>
 </form>
 

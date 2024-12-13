@@ -1,7 +1,54 @@
 <script>
+  import { auth, firestore } from '$lib/firebase';
+  import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+  import { onAuthStateChanged } from 'firebase/auth';
+	import { onMount } from 'svelte';
   export let user;
   export let isFollowing;
   export let loggedInUser;
+
+  onMount(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if(user) {
+        await checkFollowStatus(user.uid);
+      }
+    });
+
+    return unsubscribe;
+  });
+
+  async function checkFollowStatus(currentUserUid) {
+    try {
+      // Fetch the logged-in user's document
+      const userDoc = doc(firestore, 'users', currentUserUid);
+      const userDocSnap = await getDoc(userDoc);
+
+      if (userDocSnap.exists()) {
+        const userDocData = userDocSnap.data();
+
+        // Check if the profile user's UID exists in the 'following' array
+        isFollowing = userDocData.following?.some((ref) => ref.id === user.uid) || false;
+      }
+    } catch (err) {
+      console.error('Error checking follow status:', err);
+    }
+  }
+
+  async function toggleFollow(uid) {
+    const res = await fetch(`/api/follow-user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ uid: loggedInUser.uid, userToFollow: uid })
+    });
+
+    if (res.ok) {
+      isFollowing = !isFollowing;
+    } else {
+      console.error('Failed to toggle follow status');
+    }
+  }
 </script>
 
 <section class="user__bio">
@@ -9,17 +56,17 @@
   <div class="user__wrapper">
     <div class="user__name">
       <h1 class="user__heading user__heading--name">{user?.displayName}</h1>
-      <!-- Render the button only when loggedInUser is not null -->
       {#if loggedInUser === null}
         <p>Loading...</p>
       {:else if loggedInUser && user?.uid === loggedInUser.uid}
         <a href="/" class="user__edit user__heading">Edit profile</a>
       {:else if loggedInUser}
-        {#if isFollowing}
-          <button class="user__btn user__btn--unfollow">Unfollow <span class="user__x">x</span></button>
-        {:else}
-          <button class="user__btn user__btn--follow">Follow <span>+</span></button>
-        {/if}
+        <button
+          class="user__btn {isFollowing ? 'user__btn--unfollow' : 'user__btn--follow'}"
+          on:click={() => toggleFollow(user.uid)}
+        >
+          {isFollowing ? 'Unfollow' : 'Follow'} <span>{isFollowing ? 'x' : '+'}</span>
+        </button>
       {/if}
     </div>
     <div class="user__info">
@@ -38,6 +85,7 @@
     </div>
   </div>
 </section>
+
 
 <style>
   .user__bio {

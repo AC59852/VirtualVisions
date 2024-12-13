@@ -21,6 +21,8 @@
   // Reactively update state when `data` changes (e.g., new `user`, `posts`, etc.)
   $: ({ user, posts, selectedPost, loggedInUser } = data);
 
+  $: console.log('User:', loggedInUser);
+
   // Cleanup modal on destruction
   onDestroy(() => {
     selectedPost = null;
