@@ -3,12 +3,9 @@ import { firestore, storage } from '$lib/firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { doc, getDoc } from 'firebase/firestore';
 import allGames from '$lib/games/all-games.json'; // Import the JSON file
-import { user as currentUser } from '$lib/stores/user';
 
 export async function POST({ request }) {
     const { uid } = await request.json();
-
-    console.log(uid);
 
     try {
         const userDoc = await getDoc(doc(firestore, 'users', uid));
@@ -41,7 +38,6 @@ export async function POST({ request }) {
         );
 
         const validFollowedUsers = followedUsersData.filter(user => user.uid !== null);
-        console.log("Fetched users:", validFollowedUsers); // Log final users array
 
         // Retrieve each post document for users who have posts and attach user data
         const postsData = await Promise.all(
@@ -53,8 +49,6 @@ export async function POST({ request }) {
                             return null;
                         }
                         const postDoc = await getDoc(postRef);
-
-                        console.log(postDoc.data());
 
                         if (postDoc.exists()) {
                             const postData = postDoc.data();
@@ -88,7 +82,7 @@ export async function POST({ request }) {
                                 imageUrl,
                                 game,
                                 displayName: user.displayName,
-                                photoURL: user.photoURL
+                                photoURL: user.photoURL,
                             };
                         }
                         return null;
@@ -98,7 +92,6 @@ export async function POST({ request }) {
         );
 
         const validPosts = postsData.filter(post => post !== null);
-        console.log("Fetched posts with user data:", validPosts);
 
         return json({
             posts: validPosts
