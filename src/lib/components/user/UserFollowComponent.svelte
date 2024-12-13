@@ -1,5 +1,9 @@
 <script>
+  import { page } from '$app/stores';
+  import { authStore } from '$lib/stores/user';
   export let user;
+
+  console.log($page)
 </script>
 
 <div class="follows__item">
@@ -11,7 +15,12 @@
       <a href="/user/{user.uid}" class="follows__link">
         <h2 class="follows__heading">{user.displayName}</h2>
       </a>
-      <button class="follows__following">Following <span class="follows__unfollow">X</span></button>
+      <!-- <button class="follows__following">Following <span class="follows__unfollow">X</span></button> -->
+
+      <!-- if the end of the route is following and the user.id matches the currently logged in user, show the following button -->
+      {#if $page.params.userID === $authStore.currentUser.uid}
+        <button class="follows__following">Following <span class="follows__unfollow">X</span></button>
+      {/if}
     </div>
     <ul class="follows__followerInfo">
       <li class="follows__listItem follows_listItem--post">
@@ -31,11 +40,9 @@
   .follows__item {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 3rem;
     font-family: "Outfit", serif;
     color: white;
-    width: 100%;
     height: 150px;
   }
 

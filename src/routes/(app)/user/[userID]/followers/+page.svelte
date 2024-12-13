@@ -28,7 +28,7 @@
   .follows {
     display: flex;
 		flex-direction: column;
-		max-width: 825px;
+		max-width: 750px;
 		margin: 0 auto;
     padding-top: 5rem;
   }

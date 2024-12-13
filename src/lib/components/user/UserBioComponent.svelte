@@ -43,11 +43,12 @@
   .user__bio {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 4.375rem;
     width: 100%;
     margin: 0 auto;
     border-bottom: solid 2px white;
-    padding: 2rem 7rem;
+    padding: 2rem 4rem;
     box-sizing: border-box;
   }
 
@@ -105,7 +106,7 @@
     font-family: "Outfit", serif;
     font-size: 0.95rem;
     line-height: 1.3;
-    width: 95%;
+    width: 80%;
   }
 
   .user__info {

@@ -63,10 +63,10 @@
 
 <style>
   .user {
-      display: flex;
-      flex-direction: column;
-      margin: 0 auto;
-      max-width: 939px;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    max-width: 939px;
   }
 
   .posts {
