@@ -80,6 +80,7 @@
   .homePost__user {
     display: flex;
     align-items: center;
+    text-decoration: none;
   }
 
   .homePost__profileIcon {
