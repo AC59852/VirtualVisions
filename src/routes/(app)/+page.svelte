@@ -6,7 +6,7 @@
 	import HomePagePost from '$lib/components/HomePagePost.svelte';
 	import { onAuthStateChanged } from 'firebase/auth';
 
-	let posts = [];
+	let posts;
 	let userData;
 	let loading = true; // Track loading state
 
@@ -80,7 +80,7 @@
 				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="home__post"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
 			</a>
 		</section>
-		{#if posts.length > 0}
+		{#if posts}
 			{#each posts as item}
 				<HomePagePost 
 					post={item} 
@@ -88,7 +88,10 @@
 				/>
 			{/each}
 		{:else}
-			<AllPosts />
+			<div class="loading loading--explore">
+				<p>Looks like you're not following anyone. Start <a href="/explore">Exploring</a> the great content users have shared.</p>
+				<!-- You can replace this with a spinner or animated loader -->
+			</div>
 		{/if}
 	{/if}
 </section>
@@ -152,5 +155,45 @@
 		color: white;
 		font-size: 1.5rem;
 		font-family: "Outfit", serif;
+	}
+
+	.loading--explore {
+		align-items: flex-start;
+		line-height: 1.4;
+		text-align: center;
+		font-size: 1.8rem;
+		font-weight: 500;
+	}
+
+	.loading--explore a {
+		color: white;
+		text-decoration: none;
+		border-bottom: 3px solid white;
+		position: relative;
+		display: inline-flex;
+		overflow: hidden;
+		transition: color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.loading--explore a::after {
+		position: absolute;
+		content: "";
+		width: 100%;
+		height: 100%;
+		bottom: 0;
+		left: 0;
+		background-color: white;
+		transform: translateY(100%);
+		transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+		z-index: -1;
+	}
+
+	.loading--explore a:hover {
+  	color: black; /* Text color changes to black */
+	}
+
+	.loading--explore a:hover::after {
+		transform: translateY(0);
+		color: black;
 	}
 </style>
