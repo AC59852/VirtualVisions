@@ -1,9 +1,12 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte';
+  import { auth } from '$lib/firebase';
 
   export let post;
   export let userName;
   export let userPhoto;
+
+  let userLikes = false;
 
   const dispatch = createEventDispatcher();
 
@@ -11,16 +14,46 @@
     dispatch('close');
   }
 
-  onMount(() => {
-    console.log(post)
-  })
+  async function likePost() {
+    const user = await auth.currentUser;
 
-  // convert the post.likeCount to a rounded number and add either a K or M if it's over 1000 but if its 0 dont show it
-  if(post.likeCount == 0 || post.likeCount == undefined) {
-    post.likeCount = '';
+    await fetch('/api/like-post', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        postId: post.id,
+        userId: user.uid,
+      }),
+    });
+
+    // Toggle userLikes
+    userLikes = !userLikes;
+
+    // Update the numeric like count
+    post.rawLikeCount += userLikes ? 1 : -1;
   }
 
-  post.likeCount = post.likeCount > 999 ? post.likeCount > 999999 ? `${Math.round(post.likeCount / 1000000)}M` : `${Math.round(post.likeCount / 1000)}K` : post.likeCount;
+  // Initialize the raw like count
+  post.rawLikeCount = post.likeCount || 0;
+
+  // Format the like count for display
+  $: formattedLikeCount = formatLikeCount(post.rawLikeCount);
+
+  function formatLikeCount(count) {
+    if (count >= 1_000_000) {
+      return Math.floor(count / 1_000_000) + 'M';
+    } else if (count >= 1_000) {
+      return Math.floor(count / 1_000) + 'K';
+    } else {
+      return count.toString();
+    }
+  }
+
+  onMount(() => {
+    console.log(post);
+  });
 </script>
 
 <section class="modal">
@@ -38,19 +71,22 @@
     <img src={post.path || post.imageUrl} alt={post.title} />
     <div class="modal__social">
       <div class="modal__btns">
-      <div class="modal__share">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2 modal__icon modal__icon--share"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-      </div>
-      <div class="modal__likes">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart modal__icon modal__icon--like"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-        <span class="modal__likeNumber">{post.likeCount}</span>
+        <div class="modal__share">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2 modal__icon modal__icon--share"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        </div>
+        <button class="modal__likes" on:click={likePost}>
+          <svg xmlns="http://www.w3.org/2000/svg"
+            width="24" height="24" viewBox="0 0 24 24" fill={userLikes ? 'white' : 'transparent'} stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart modal__icon modal__icon--like">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span class="modal__likeNumber">{formattedLikeCount}</span>
+        </button>
       </div>
     </div>
     <h2 class="post__title">{post.title}</h2>
     <p class="post__description">{post.description || post.content}</p>
   </div>
 </section>
-
 <style>
   .modal {
     position: fixed;
@@ -154,6 +190,8 @@
     display: flex;
     align-items: center;
     gap: 5px;
+    background: transparent;
+    border: none;
   }
 
   .modal__likeNumber {

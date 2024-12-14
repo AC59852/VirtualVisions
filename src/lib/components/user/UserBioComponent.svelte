@@ -2,14 +2,17 @@
   import { auth, firestore } from '$lib/firebase';
   import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
   import { onAuthStateChanged } from 'firebase/auth';
-	import { onMount } from 'svelte';
+  import { onMount } from 'svelte';
+  
   export let user;
   export let isFollowing;
   export let loggedInUser;
 
+  let followerCount = user?.followers.length || 0;
+
   onMount(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if(user) {
+      if (user) {
         await checkFollowStatus(user.uid);
       }
     });
@@ -19,14 +22,11 @@
 
   async function checkFollowStatus(currentUserUid) {
     try {
-      // Fetch the logged-in user's document
       const userDoc = doc(firestore, 'users', currentUserUid);
       const userDocSnap = await getDoc(userDoc);
 
       if (userDocSnap.exists()) {
         const userDocData = userDocSnap.data();
-
-        // Check if the profile user's UID exists in the 'following' array
         isFollowing = userDocData.following?.some((ref) => ref.id === user.uid) || false;
       }
     } catch (err) {
@@ -35,18 +35,24 @@
   }
 
   async function toggleFollow(uid) {
-    const res = await fetch(`/api/follow-user`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ uid: loggedInUser.uid, userToFollow: uid })
-    });
+    try {
+      const res = await fetch(`/api/follow-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ uid: loggedInUser.uid, userToFollow: uid })
+      });
 
-    if (res.ok) {
-      isFollowing = !isFollowing;
-    } else {
-      console.error('Failed to toggle follow status');
+      if (res.ok) {
+        const { followerCount: updatedCount } = await res.json();
+        followerCount = updatedCount;
+        isFollowing = !isFollowing;
+      } else {
+        console.error('Failed to toggle follow status');
+      }
+    } catch (err) {
+      console.error('Error toggling follow status:', err);
     }
   }
 </script>
@@ -75,7 +81,7 @@
           <a href="#user__posts" class="user__link user__link--posts">{user?.posts.length} Posts</a>
         </li>
         <li class="user__listItem user__heading user__heading--followers">
-          <a href="/user/{user?.uid}/followers" class="user__link user__link--followers">{user?.followers.length} Followers</a>
+          <a href="/user/{user?.uid}/followers" class="user__link user__link--followers">{followerCount} Followers</a>
         </li>
         <li class="user__listItem user__heading user__heading--following">
           <a href="/user/{user?.uid}/following" class="user__link user__link--following">{user?.following.length} Following</a>
