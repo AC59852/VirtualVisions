@@ -44,12 +44,11 @@
 }
 </script>
 
-<svelte:head>
-  <title>Virtual Visions</title>
-</svelte:head>
-
 {#if $authStore.isLoading}
   <div>Loading...</div>
+  <div class="loading--hide">
+    <slot />
+  </div>
 {:else}
   <button on:click={VVSignOut} class="signout">Sign Out <span>></span></button>
   <NavMenuComponent user={$authStore.currentUser?.uid} />
@@ -70,5 +69,9 @@
 
   .signout span {
     color: red;
+  }
+
+  .loading--hide {
+    display: none !important;
   }
 </style>
