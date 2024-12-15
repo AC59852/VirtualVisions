@@ -70,7 +70,12 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Virtual Visions | Login</title>
+</svelte:head>
+
 <section class="login__form">
+
 	<div class="login__wrapper">
 	<h1 class="login__heading">Virtual Visions</h1>
 	<div class="login__btnWrapper">
