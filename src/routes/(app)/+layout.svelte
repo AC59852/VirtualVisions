@@ -24,12 +24,12 @@
 
   // Reactive block for handling redirection
   $: {
-    if (browser && !$authStore.isLoading) {
-      if (!$authStore.currentUser && ['/post/new', '/'].includes(window.location.pathname)) {
-        console.log("Redirecting to /signin...");
-        window.location.href = '/signin';
-      }
+  if (browser && !$authStore.isLoading) {
+    if (!$authStore.currentUser && ['/post/new', '/'].includes(window.location.pathname)) {
+      console.log("Redirecting to /signin...");
+      goto('/signin');
     }
+  }
   }
 
   async function VVSignOut() {
@@ -43,6 +43,10 @@
   }
 }
 </script>
+
+<svelte:head>
+  <title>Virtual Visions</title>
+</svelte:head>
 
 {#if $authStore.isLoading}
   <div>Loading...</div>
