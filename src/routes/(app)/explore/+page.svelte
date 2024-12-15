@@ -100,6 +100,23 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Virtual Visions | Explore</title>
+	<meta name="description" content="Explore the latest posts from the Virtual Visions community, viewing astonishing and breathtaking photos from gamers just like yourself." />
+	<meta property="og:title" content="Virtual Visions | Explore" />
+	<meta property="og:description" content="Explore the latest posts from the Virtual Visions community, viewing astonishing and breathtaking photos from gamers just like yourself." />
+	<meta property="og:image" content="/vv-logo.png" />
+	<meta property="og:url" content="https://virtual-visions-red.vercel.app/explore" />
+	<!-- twitter card -->
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="@virtualvisions" />
+	<meta name="twitter:title" content="Virtual Visions | Explore" />
+	<meta name="twitter:description" content="Explore the latest posts from the Virtual Visions community, viewing astonishing and breathtaking photos from gamers just like yourself." />
+	<meta name="twitter:image" content="/vv-logo.png" />
+	<!-- robots follow and index -->
+	<meta name="robots" content="follow, index" />
+</svelte:head>
+
 <section class="explore">
 	<form on:submit={handleSearchSubmit} class="explore__form">
 		<input type="text" name="search" id="search" class="explore__search" placeholder="Search users" bind:value={search} />

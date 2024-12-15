@@ -6,6 +6,11 @@
   let { followers } = data;
 </script>
 
+<svelte:head>
+  <!-- don't index -->
+  <meta name="robots" content="noindex, nofollow" />
+</svelte:head>
+
 <section class="follows followers">
   {#await followers}
     <p>Loading...</p>

@@ -31,7 +31,20 @@
 
 <svelte:head>
   <title>Virtual Visions | {user?.displayName}</title>
-  <meta name="description" content="View all posts by {user?.displayName} on Virtual Visions" />
+  <meta name="description" content="View all of {user?.displayName}s incredible posts on Virtual Visions, gaining a sense of creativity and newfound appreciation for your favourite and even new games." />
+  <meta property="og:title" content="Virtual Visions | {user?.displayName}" />
+	<meta property="og:description" content="View all of {user?.displayName}s incredible posts on Virtual Visions, gaining a sense of creativity and newfound appreciation for your favourite and even new games." />
+	<meta property="og:image" content="{user?.photoURL}" />
+	<meta property="og:url" content="https://virtual-visions-red.vercel.app/app/post/new" />
+	<!-- twitter card -->
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="@virtualvisions" />
+	<meta name="twitter:creator" content="@virtualvisions" />
+	<meta name="twitter:title" content="Virtual Visions | {user?.displayName}" />
+	<meta name="twitter:description" content="View all of {user?.displayName}s incredible posts on Virtual Visions, gaining a sense of creativity and newfound appreciation for your favourite and even new games." />
+	<meta name="twitter:image" content="{user?.photoURL}" />
+	<!-- robots -->
+	<meta name="robots" content="index, follow" />
 </svelte:head>
 
 <section class="user">

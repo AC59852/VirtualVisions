@@ -72,8 +72,15 @@
 
 <svelte:head>
 	<title>Virtual Visions | Login</title>
+	<meta name="description" content="Virtual Visions is a social media platform for gamers to share their experiences and connect with others by uploading beautiful images from your favourite games and allowing others to view and marvel at your content" />
+	<meta name="keywords" content="gaming, social media, images, sharing, community, friends, games, virtual visions" />
+	<meta name="author" content="Virtual Visions" />
+	<meta name="robots" content="index, follow" />
+	<!-- open graph -->
+	<meta property="og:title" content="Virtual Visions | Login" />
+	<meta property="og:description" content="Virtual Visions is a social media platform for gamers to share their experiences and connect with others by uploading beautiful images from your favourite games and allowing others to view and marvel at your content" />
+	<meta property="og:image" content="/vv-logo.png" />
 </svelte:head>
-
 <section class="login__form">
 
 	<div class="login__wrapper">

@@ -21,6 +21,11 @@
 	});
 </script>
 
+ <svelte:head>
+	<!-- no index -->
+	<meta name="robots" content="noindex, nofollow" />
+ </svelte:head>
+
 {#if authStore.isLoading}
 	<div>Loading...</div>
 {:else}

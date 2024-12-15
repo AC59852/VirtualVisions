@@ -18,6 +18,23 @@
   }
 </script>
 
+<svelte:head>
+	<title>Virtual Visions | {selectedPost?.title ? selectedPost.title : `${user?.name} | Photos` }</title>
+	<meta name="description" content="{selectedPost.description ? selectedPost.description : "An amazing, high-quality post from someone just like yourself"}, only on Virtual Visions" />
+	<meta property="og:title" content="Virtual Visions | {selectedPost?.title ? selectedPost.title : `${user?.name} | Photos` }" />
+	<meta property="og:description" content="{selectedPost.description ? selectedPost.description : "An amazing, high-quality post from someone just like yourself"}, only on Virtual Visions" />
+	<meta property="og:image" content="{selectedPost.imageUrl}" />
+	<meta property="og:url" content="https://virtual-visions-red.vercel.app/explore" />
+	<!-- twitter card -->
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="@virtualvisions" />
+	<meta name="twitter:title" content="Virtual Visions | {selectedPost?.title ? selectedPost.title : `${user?.name} | Photos` }" />
+	<meta name="twitter:description" content="{selectedPost.description ? selectedPost.description : "An amazing, high-quality post from someone just like yourself"}, only on Virtual Visions" />
+	<meta name="twitter:image" content="{selectedPost.imageUrl}" />
+	<!-- robots follow and index -->
+	<meta name="robots" content="follow, index" />
+</svelte:head>
+
 <div class="pageWrapper">
   <article class="userPost">
     <section class="userPost__header">

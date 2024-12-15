@@ -76,7 +76,23 @@
 
 </script>
 
-<h1>Test</h1>
+<svelte:head>
+	<title>Virtual Visions | New Post</title>
+	<meta name="description" content="Create a new high-quality post on Virtual Visions, sharing your creativity and vast experiences with an amazing community." />
+	<meta property="og:title" content="Virtual Visions | New Post" />
+	<meta property="og:description" content="Create a new high-quality post on Virtual Visions, sharing your creativity and vast experiences with an amazing community." />
+	<meta property="og:image" content="/vv-logo.png" />
+	<meta property="og:url" content="https://virtual-visions-red.vercel.app/app/post/new" />
+	<!-- twitter card -->
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="@virtualvisions" />
+	<meta name="twitter:creator" content="@virtualvisions" />
+	<meta name="twitter:title" content="Virtual Visions | New Post" />
+	<meta name="twitter:description" content="Create a new high-quality post on Virtual Visions, sharing your creativity and vast experiences with an amazing community." />
+	<meta name="twitter:image" content="/vv-logo.png" />
+	<!-- robots -->
+	<meta name="robots" content="index, follow" />
+</svelte:head>
 
 <form on:submit={createPost}>
 	<select name="game">
