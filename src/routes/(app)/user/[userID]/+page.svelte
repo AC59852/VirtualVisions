@@ -35,7 +35,7 @@
   <meta property="og:title" content="Virtual Visions | {user?.displayName}" />
 	<meta property="og:description" content="View all of {user?.displayName}s incredible posts on Virtual Visions, gaining a sense of creativity and newfound appreciation for your favourite and even new games." />
 	<meta property="og:image" content="{user?.photoURL}" />
-	<meta property="og:url" content="https://virtual-visions-red.vercel.app/app/post/new" />
+	<meta property="og:url" content="https://virtual-visions-red.vercel.app/user/{user.uid}" />
 	<!-- twitter card -->
 	<meta name="twitter:card" content="summary" />
 	<meta name="twitter:site" content="@virtualvisions" />
