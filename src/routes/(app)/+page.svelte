@@ -63,7 +63,7 @@
 	<!-- open graph -->
 	<meta property="og:title" content="Virtual Visions | Home" />
 	<meta property="og:description" content="Virtual Visions is a social media platform for gamers to share their experiences and connect with others by uploading beautiful images from your favourite games and allowing others to view and marvel at your content" />
-	<meta property="og:image" content="/images/vv-logo.png" />
+	<meta property="og:image" content="/vv-logo.png" />
 </svelte:head>
 
 <section class="home__feed">
