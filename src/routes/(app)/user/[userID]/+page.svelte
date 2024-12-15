@@ -29,6 +29,11 @@
   });
 </script>
 
+<svelte:head>
+  <title>Virtual Visions | {user?.displayName}</title>
+  <meta name="description" content="View all posts by {user?.displayName} on Virtual Visions" />
+</svelte:head>
+
 <section class="user">
   {#if user}
     <UserBioComponent user={user} loggedInUser={loggedInUser} />
