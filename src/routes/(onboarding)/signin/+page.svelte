@@ -80,6 +80,7 @@
 	<meta property="og:title" content="Virtual Visions | Login" />
 	<meta property="og:description" content="Virtual Visions is a social media platform for gamers to share their experiences and connect with others by uploading beautiful images from your favourite games and allowing others to view and marvel at your content" />
 	<meta property="og:image" content="/vv-logo.png" />
+	<meta property="og:url" content="https://virtual-visions-red.vercel.app/signin" />
 </svelte:head>
 <section class="login__form">
 
