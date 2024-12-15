@@ -3,8 +3,7 @@
 	import { onMount } from 'svelte';
 	import HomePagePost from '$lib/components/HomePagePost.svelte';
 	import { onAuthStateChanged } from 'firebase/auth';
-
-	export let title = 'Virtual Visions | Home';
+	
 	let posts;
 	let userData;
 	let loading = true; // Track loading state
@@ -56,13 +55,13 @@
 </script>
 
 <svelte:head>
-	<title>{title}</title>
+	<title>Virtual Visions | Home</title>
 	<meta name="description" content="Virtual Visions is a social media platform for gamers to share their experiences and connect with others by uploading beautiful images from your favourite games and allowing others to view and marvel at your content" />
 	<meta name="keywords" content="gaming, social media, images, sharing, community, friends, games, virtual visions" />
 	<meta name="author" content="Virtual Visions" />
 	<meta name="robots" content="index, follow" />
 	<!-- open graph -->
-	<meta property="og:title" content={title} />
+	<meta property="og:title" content="Virtual Visions | Home" />
 	<meta property="og:description" content="Virtual Visions is a social media platform for gamers to share their experiences and connect with others by uploading beautiful images from your favourite games and allowing others to view and marvel at your content" />
 	<meta property="og:image" content="/images/vv-logo.png" />
 </svelte:head>

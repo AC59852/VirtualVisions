@@ -43,17 +43,14 @@
   }
 }
 </script>
-
-{#if $authStore.isLoading}
-  <div>Loading...</div>
-  <div class="loading--hide">
+  {#if $authStore.isLoading}
+    <p class="loading">Loading...</p>
+  {/if}
+  <div class="{ $authStore.isLoading ? 'loading--hide' : '' }">
+    <button on:click={VVSignOut} class="signout">Sign Out <span>></span></button>
+    <NavMenuComponent user={$authStore.currentUser?.uid} />
     <slot />
   </div>
-{:else}
-  <button on:click={VVSignOut} class="signout">Sign Out <span>></span></button>
-  <NavMenuComponent user={$authStore.currentUser?.uid} />
-  <slot />
-{/if}
 <style>
   .signout {
     font-family: "Outfit", sans-serif;
@@ -70,6 +67,16 @@
   .signout span {
     color: red;
   }
+
+  .loading {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100vh;
+		color: white;
+		font-size: 1.5rem;
+		font-family: "Outfit", serif;
+	}
 
   .loading--hide {
     display: none !important;
