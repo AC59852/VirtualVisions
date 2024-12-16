@@ -128,6 +128,7 @@
 		width: 86px;
 		height: 86px;
 		border-radius: 50%;
+		object-fit: cover;
 	}
 
 	.home__name {

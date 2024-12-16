@@ -70,7 +70,6 @@ export async function POST({ request }) {
                             // Get game data
                             const gameId = postData.game; // Assuming `gameId` is in post data
                             const game = allGames.find(game => game.id === gameId);
-
                             return {
                                 id: postDoc.id,
                                 title,
@@ -91,11 +90,13 @@ export async function POST({ request }) {
             )
         );
 
-        const validPosts = postsData.filter(post => post !== null);
+        const validPosts = postsData
+              .filter(post => post !== null)
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-        return json({
-            posts: validPosts
-        });
+            return json({
+              posts: validPosts
+            });
     }
     catch (e) {
         return json({

@@ -68,7 +68,7 @@
         <h3 class="modal__profileName">{userName}</h3>
       </a>
     </button>
-    <img src={post.path || post.imageUrl} alt={post.title} />
+    <img src={post.path || post.imageUrl} alt={post.title} class="post__img" />
     <div class="modal__social">
       <div class="modal__btns">
         <div class="modal__share">
@@ -83,8 +83,12 @@
         </button>
       </div>
     </div>
-    <h2 class="post__title">{post.title}</h2>
-    <p class="post__description">{post.description || post.content}</p>
+    {#if post.title}
+      <h2 class="post__title">{post.title}</h2>
+    {/if}
+    {#if post.description}
+      <p class="post__description">{post.description}</p>
+    {/if}
   </div>
 </section>
 <style>
@@ -157,6 +161,8 @@
     width: 100%;
     object-fit: cover;
     align-self: center;
+    max-height: 646px;
+    background-color: #181818;
   }
 
   .post__title {
