@@ -61,8 +61,15 @@
         </div>
       </div>
       <div class="userPost__content">
-        <h1 class="userPost__title">{selectedPost.title}</h1>
-        <p class="userPost__description">{selectedPost.description || selectedPost.content}</p>
+        {#if selectedPost.title}
+          <h1 class="userPost__title">{selectedPost.title}</h1>
+        {/if}
+        {#if selectedPost.description}
+          <p class="userPost__description">{selectedPost.description}</p>
+        {/if}
+        {#if selectedPost.content}
+          <p class="userPost__description">{selectedPost.content}</p>
+        {/if}
       </div>
     </section>
   </article>
@@ -111,6 +118,7 @@
     width: 47px;
     height: 47px;
     border-radius: 50%;
+    object-fit: cover;
   }
 
   .userPost__profileName {

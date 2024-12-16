@@ -6,6 +6,8 @@
 
 	// Generic sign-in function
 	async function signInWithProvider(provider) {
+		const defaultFollowingRef = doc(firestore, 'users', 'ZBm9Av4V0PfbT0vrK7IZz2vGpJo2');
+		
 		try {
 			// Sign in with the provided auth provider
 			await signInWithPopup(auth, provider);
@@ -30,10 +32,10 @@
 					description: '',
 					email: auth.currentUser.email,
 					followers: [],
-					following: [],
+					following: [defaultFollowingRef],
 					games: [],
 					isOnboarded: false,
-					photoURL: auth.currentUser.photoURL,
+					photoURL: '',
 					uid: auth.currentUser.uid,
 					posts: [],
 					createdAt: new Date().toISOString(),

@@ -22,5 +22,6 @@
     height: 100%;
     object-fit: cover;
     object-position: center;
+    background-color: #181818;
   }
 </style>
