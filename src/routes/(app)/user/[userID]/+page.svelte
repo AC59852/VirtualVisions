@@ -99,6 +99,7 @@
     grid-template-columns: repeat(3, 1fr);
     width: 100%;
     gap: 4px;
+    margin-top: 30px;
   }
 
   .loading--explore {
