@@ -33,15 +33,15 @@
   }
 
   async function VVSignOut() {
-  try {
-    await signOut(auth); // Perform the sign-out
-    authStore.set({ currentUser: null, isLoading: false }); // Clear the user store immediately
-    console.log('User signed out');
-    goto('/signin');
-  } catch (e) {
-    console.error('Sign out error:', e);
+    try {
+      await signOut(auth); // Perform the sign-out
+      authStore.set({ currentUser: null, isLoading: false }); // Clear the user store immediately
+      console.log('User signed out');
+      goto('/signin');
+    } catch (e) {
+      console.error('Sign out error:', e);
+    }
   }
-}
 </script>
   {#if $authStore.isLoading}
     <p class="loading">Loading...</p>
@@ -80,5 +80,11 @@
 
   .loading--hide {
     display: none !important;
+  }
+
+  @media screen and (max-width: 768px) {
+    .signout {
+      display: none;
+    }
   }
 </style>
