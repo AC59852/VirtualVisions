@@ -198,4 +198,14 @@
 		transform: translateY(0);
 		color: black;
 	}
+
+	@media screen and (max-width: 768px) {
+
+		.home__feed {
+			margin-top: 5rem;
+		}
+		.home__intro {
+			display: none;
+		}
+	}
 </style>
