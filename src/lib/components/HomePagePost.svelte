@@ -206,4 +206,18 @@
     background-color: #4E4E4E;
     margin: 33px 0;
   }
+
+  @media screen and (max-width: 430px) {
+		.homePost__userWrapper {
+			padding: 0 10px;
+		}
+
+		.homePost__img {
+			height: 280px;
+		}
+
+    .homePost__contentWrapper {
+      padding: 0 7px;
+    }
+	}
 </style>

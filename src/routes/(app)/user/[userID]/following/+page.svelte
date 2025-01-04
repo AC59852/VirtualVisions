@@ -4,6 +4,8 @@
   export let data;
 
   let { following } = data;
+
+  console.log(following)
 </script>
 
 <svelte:head>
