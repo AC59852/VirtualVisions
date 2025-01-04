@@ -207,7 +207,7 @@
     margin: 33px 0;
   }
 
-  @media screen and (max-width: 430px) {
+  @media screen and (max-width: 470px) {
 		.homePost__userWrapper {
 			padding: 0 10px;
 		}
