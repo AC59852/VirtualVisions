@@ -3,7 +3,25 @@
   import { authStore } from '$lib/stores/user';
   export let user;
 
+  let loggedInUser;
+
   console.log($page)
+
+  $: authStore.subscribe((value) => {
+    loggedInUser = value.currentUser;
+  })
+
+  async function followUser() {
+    await fetch('/api/follow-user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ uid: loggedInUser.uid, userToFollow: user.uid })
+    });
+
+    console.log(loggedInUser.uid)
+  }
 </script>
 
 <div class="follows__item">
@@ -18,8 +36,8 @@
       <!-- <button class="follows__following">Following <span class="follows__unfollow">X</span></button> -->
 
       <!-- if the end of the route is following and the user.id matches the currently logged in user, show the following button -->
-      {#if $page.params.userID === $authStore.currentUser.uid}
-        <button class="follows__following">Following <span class="follows__unfollow">X</span></button>
+      {#if $page.params.userID === loggedInUser?.uid}
+        <button class="follows__following" on:click={followUser}>Following <span class="follows__unfollow">X</span></button>
       {/if}
     </div>
     <ul class="follows__followerInfo">
@@ -47,7 +65,8 @@
   }
 
   .follows__photo {
-    height: 80%;
+    width: 120px;
+    height: 120px;
     object-fit: cover;
   }
 
