@@ -83,7 +83,9 @@
 
 {#if isMobile}
 <header class="mobile-menu__top {hideTopBar ? 'hidden' : ''}">
-  <h1 class="mobile-menu__title">Virtual Visions</h1>
+  <a href="/" class="mobile-menu__title">
+    <h1>Virtual Visions</h1>
+  </a>
   <div class="mobile-menu__settings">
     <a href="/" on:click={VVSignOut}>Sign Out</a>
     <a href="/settings" class="mobile-menu__settings">
@@ -306,6 +308,7 @@
   font-size: 1.2rem;
   font-family: 'Outfit', serif;
   color: white;
+  text-decoration: none;
 }
 
 .mobile-menu__settings {

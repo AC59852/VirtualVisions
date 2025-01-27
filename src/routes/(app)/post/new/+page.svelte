@@ -125,6 +125,18 @@
 		console.log("current game:", currentGame);
 	}
 
+	// Responsive flag
+  // let isMobile = false;
+
+  // Listen for window resize to determine if it's mobile
+  // if (typeof window !== 'undefined') {
+  //   const checkMobile = () => {
+  //     isMobile = window.innerWidth <= 768;
+  //   };
+  //   window.addEventListener('resize', checkMobile);
+  //   checkMobile(); // Initial check
+  // }
+
 </script>
 
 <svelte:head>
@@ -388,5 +400,51 @@
 
 	:global(.sv-item--content) {
 		overflow: visible !important;
+	}
+
+	@media screen and (max-width: 470px) {
+		.post {
+			position: initial;
+			top: initial;
+			left: initial;
+			transform: initial;
+			width: 100%;
+			padding: 6rem 0;
+		}
+
+		.post__title {
+			font-size: 2rem;
+			margin-left: 0;
+			margin-bottom: 3rem;
+			text-align: center;
+		}
+
+		.form {
+			flex-direction: column;
+			gap: 3rem;
+			width: 100%;
+		}
+
+		.form__user {
+			padding: 0 10px;
+			box-sizing: border-box;
+		}
+
+		.form__preview {
+			width: 100%;
+		}
+
+		.form__previewTitle, .form__previewDesc {
+			padding: 0 7px;
+			font-size: 0.84rem;
+		}
+
+		.post__preview {
+			height: 280px;
+		}
+
+		.form__main {
+			width: 95%;
+		}
 	}
 </style>

@@ -2,12 +2,20 @@
 	import { onMount } from 'svelte';
 	import PostComponent from '$lib/components/user/PostComponent.svelte';
 	import PostModal from '$lib/components/user/PostModal.svelte';
+	import { pushState } from '$app/navigation';
+	import UserFollowComponent from '$lib/components/user/UserFollowComponent.svelte';
 
+	export let data;
+
+	let userData = [];
 	let posts = [];
+	let { searchQuery } = data;
 	let lastVisible = null; // Track the last visible document for pagination
 	let isLoading = false;
 	let selectedPost = null;
 	let isEndReached = false; // New variable to track if all posts are loaded
+	let search = searchQuery || '';
+	let initialSearch = search;
 
 	// Fetch posts from the server
 	async function loadPosts() {
@@ -46,10 +54,42 @@
 		}
 	}
 
-	// Load initial posts on mount
-	onMount(() => {
-		loadPosts();
-	});
+	async function searchUsers() {
+		try {
+			const response = await fetch('/api/get-users', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ search })
+			});
+
+			const result = await response.json();
+
+			if (response.ok) {
+				userData = result.body;
+			} else {
+				userData = [];
+			}
+		} catch (error) {
+			console.error('Error searching users:', error);
+			userData = [];
+		}
+	}
+
+	async function handleSearchSubmit(event) {
+		event.preventDefault();
+
+		if (search !== initialSearch) {
+			if (search) {
+				pushState(`/explore?search=${search}`);
+				searchUsers();
+			} else {
+				pushState('/explore');
+				loadPosts();
+				userData = [];
+			}
+			initialSearch = search;
+		}
+	};
 
 	// Handle infinite scrolling
 	function handleScroll() {
@@ -57,12 +97,22 @@
 		if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading && !isEndReached) {
 			loadPosts();
 		}
-	}
+	};
 
-	// Listen for scroll events
+	// Load initial posts on mount
 	onMount(() => {
-		window.addEventListener('scroll', handleScroll);
-		return () => window.removeEventListener('scroll', handleScroll);
+		// loadPosts();
+
+		// window.addEventListener('scroll', handleScroll);
+		// return () => window.removeEventListener('scroll', handleScroll);
+
+		if(search) {
+			searchUsers();
+		} else {
+			loadPosts();
+			window.addEventListener('scroll', handleScroll);
+			return () => window.removeEventListener('scroll', handleScroll);
+		}
 	});
 
 	async function openPost(post) {
@@ -79,26 +129,51 @@
 </svelte:head>
 
 <section class="explore">
-	<h1>Explore</h1>
+	<form on:submit={handleSearchSubmit} class="explore__form">
+		<input
+			type="text"
+			name="search"
+			id="search"
+			class="explore__search"
+			placeholder="Search users"
+			bind:value={search} />
+	</form>
 
-	<section class="posts">
-		{#each posts as post}
-			<div on:click={() => openPost(post)}>
-				<PostComponent post={post} />
-			</div>
-		{/each}
-	</section>
-
-	{#if isLoading}
-		<p>Loading more posts...</p>
+	{#if userData !== undefined && userData.length > 0}
+		<section class="explore__wrapper">
+			<h2 class="explore__title explore__title--search">Search results for: {search}</h2>
+			<section class="explore__users">
+				{#each userData as user}
+					<UserFollowComponent user={user} />
+				{/each}
+			</section>
+		</section>
 	{/if}
 
-	{#if selectedPost}
-		<PostModal post={selectedPost} on:close={closeModal} />
-	{/if}
+	<!-- hide explore if the user searched for someone -->
+	{#if userData.length === 0}
+		<h1 class="explore__title explore__title--main">Explore</h1>
+		{#if posts.length > 0}
+			<section class="posts">
+				{#each posts as post}
+					<a
+						href="/user/{post.account}/post/{post.id}"
+						on:click={(e) => { e.preventDefault(); openPost(post); }}>
+						<PostComponent post={post} />
+					</a>
+				{/each}
+			</section>
+		{:else}
+			<p>No posts</p>
+		{/if}
 
-	{#if isEndReached}
-		<p>No more posts available.</p> <!-- Show message when end is reached -->
+		{#if selectedPost}
+			<PostModal post={selectedPost} userName={userName} userPhoto={userPhoto} on:close={closeModal} />
+		{/if}
+
+		{#if isLoading}
+			<p>Loading...</p>
+		{/if}
 	{/if}
 </section>
 
