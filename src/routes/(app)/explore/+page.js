@@ -1,8 +1,10 @@
-export async function load({ url, params, fetch }) {
-	const searchQuery = url.searchParams.get('search') || ''; // Get the 'search' query parameter
-	const postID = params.postID || null;
-
-	const res = await fetch('/api/all-posts');
+export async function load({ url, fetch }) {
+	const searchQuery = url.searchParams.get('search') || '';
+	const res = await fetch('/api/all-posts', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ lastVisible: null }) // Initial load
+	});
 
 	if (!res.ok) {
 		return { status: res.status, error: new Error('Data not found') };
@@ -10,15 +12,9 @@ export async function load({ url, params, fetch }) {
 
 	const data = await res.json();
 
-	let selectedPost = null;
-
-	if (postID) {
-		selectedPost = data.posts.find(post => post.id === postID) || null;
-	}
-
 	return {
-		posts: data,
-		selectedPost,
-		searchQuery // Include the search query in the returned data
+		posts: data.items,
+		selectedPost: null,
+		searchQuery
 	};
 }
