@@ -25,7 +25,7 @@
   // Reactive block for handling redirection
   $: {
   if (browser && !$authStore.isLoading) {
-    if (!$authStore.currentUser && ['/post/new', '/'].includes(window.location.pathname)) {
+    if (!$authStore.currentUser && ['/post/new', '/', '/settings'].includes(window.location.pathname)) {
       console.log("Redirecting to /signin...");
       goto('/signin');
     }

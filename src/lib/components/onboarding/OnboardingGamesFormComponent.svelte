@@ -228,6 +228,10 @@
     cursor: pointer;
   }
 
+  :global(.sv-item--content) {
+    overflow: visible !important;
+  }
+
   :global(.sv-input--text) {
     color: white;
     opacity: 1;
