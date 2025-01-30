@@ -116,7 +116,11 @@
 	});
 
 	async function openPost(post) {
-		selectedPost = post;
+		selectedPost = {
+			...post,
+			userName: post.userName, // Ensure these fields exist in your API response
+			userPhoto: post.userPhoto
+		};
 	}
 
 	async function closeModal() {
@@ -168,7 +172,7 @@
 		{/if}
 
 		{#if selectedPost}
-			<PostModal post={selectedPost} userName={userName} userPhoto={userPhoto} on:close={closeModal} />
+    	<PostModal post={selectedPost} userName={selectedPost.userName} userPhoto={selectedPost.userPhoto} on:close={closeModal} />
 		{/if}
 
 		{#if isLoading}
