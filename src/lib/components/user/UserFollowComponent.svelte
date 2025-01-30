@@ -5,8 +5,6 @@
 
   let loggedInUser;
 
-  console.log($page)
-
   $: authStore.subscribe((value) => {
     loggedInUser = value.currentUser;
   })
@@ -19,8 +17,6 @@
       },
       body: JSON.stringify({ uid: loggedInUser.uid, userToFollow: user.uid })
     });
-
-    console.log(loggedInUser.uid)
   }
 </script>
 

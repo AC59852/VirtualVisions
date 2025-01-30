@@ -60,11 +60,7 @@ export async function POST({ request }) {
         // Get game data
         const game = allGames.find(game => game.id === gameId);
 
-        console.log(account)
-
         const userData = await fetchUserData(account);
-
-        console.log('userData:', userData);
 
         return {
           id: postDoc.id,

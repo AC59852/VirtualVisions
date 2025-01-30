@@ -4,22 +4,17 @@ import { collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc } f
 
 export async function POST({ request }) {
 	const { lastVisible, limit: pageLimit = 15 } = await request.json();
-
-	console.log("Received lastVisible:", lastVisible);
-
 	try {
 		const postsRef = collection(firestore, 'posts');
 		let postsQuery = query(postsRef, orderBy('createdAt', 'desc'), limit(pageLimit));
 
 		if (lastVisible) {
 			const docId = lastVisible.split('/').pop();
-			console.log("Extracted docId:", docId);
 
 			const lastDocRef = doc(firestore, 'posts', docId);
 			const lastDocSnapshot = await getDoc(lastDocRef);
 
 			if (lastDocSnapshot.exists()) {
-				console.log("Found last document:", lastDocSnapshot.data());
 				postsQuery = query(postsRef, orderBy('createdAt', 'desc'), startAfter(lastDocSnapshot), limit(pageLimit));
 			} else {
 				console.log('No more posts to load.');
@@ -48,8 +43,6 @@ export async function POST({ request }) {
 		}));
 
 		const lastDoc = snapshot.docs[snapshot.docs.length - 1];
-
-		console.log("Last document fetched:", lastDoc.data());
 
 		return json({
 			posts,

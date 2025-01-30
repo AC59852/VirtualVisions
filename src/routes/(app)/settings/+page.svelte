@@ -47,7 +47,6 @@
       try {
           userRef = doc(firestore, `users/${auth.currentUser.uid}`);
           await updateDoc(userRef, { [field]: value });
-          console.log(`${field} updated:`, value);
       } catch (e) {
           console.error(`Error updating ${field}:`, e);
       }
@@ -64,12 +63,10 @@
           const res = await listAll(profilePhotoFolderRef);
           for (const itemRef of res.items) {
               await deleteObject(itemRef);
-              console.log(`Old photo deleted: ${itemRef.fullPath}`);
           }
 
           // Upload new file
           await uploadBytes(storageRef, file);
-          console.log("File uploaded!");
 
           // Get and update Firestore with new photo URL
           const uploadedPhotoURL = await getDownloadURL(storageRef);
@@ -111,7 +108,6 @@
   }
 
   async function addGame(game) {
-      console.log(game)
 
       if (currentGames.length >= 5) {
           console.warn("You can only select up to 5 games.");

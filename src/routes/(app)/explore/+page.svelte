@@ -23,8 +23,6 @@
 		isLoading = true;
 
 		try {
-			console.log('Loading posts, lastVisible:', lastVisible);
-
 			const response = await fetch('/api/all-posts', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },

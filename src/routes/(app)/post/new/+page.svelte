@@ -88,7 +88,6 @@
 
 		// Add the post to Firestore
 		const postRef = await addDoc(collection(firestore, 'posts'), post);
-		console.log('Document written with ID:', postRef.id);
 
 		const likesRef = collection(postRef, 'likes');
     await addDoc(likesRef, {
@@ -121,8 +120,6 @@
 		const game = event.detail; // The selected game from Svelecte
 
 		currentGame = game;
-
-		console.log("current game:", currentGame);
 	}
 
 	// Responsive flag

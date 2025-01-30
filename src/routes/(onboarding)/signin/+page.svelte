@@ -17,7 +17,6 @@
 			const docSnap = await getDoc(userRef);
 
 			if (docSnap.exists()) {
-				console.log("User data: ", docSnap.data());
 
 				// if docSnap.data().isOnboarded is false, redirect to onboarding
 				if (!docSnap.data().isOnboarded) {

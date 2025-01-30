@@ -42,7 +42,6 @@
     try {
       await signOut(auth); // Perform the sign-out
       authStore.set({ currentUser: null, isLoading: false }); // Clear the user store immediately
-      console.log('User signed out');
       goto('/signin');
     } catch (e) {
       console.error('Sign out error:', e);
@@ -61,7 +60,6 @@
     {/if}
     {#if currentForm.id === 2}
       <OnboardingGamesFormComponent {currentForm} on:backstep={() => {
-        console.log("test")
         currentForm = onboardingForms[0];
       }} />
     {/if}

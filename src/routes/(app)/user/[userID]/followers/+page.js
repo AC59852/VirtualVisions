@@ -13,9 +13,6 @@ export async function load({ url, params, fetch }) {
 	}
 
 	const data = await res.json();
-
-  console.log(data);
-
 	return {
     followers: data.followers
 	};
