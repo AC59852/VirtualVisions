@@ -5,62 +5,58 @@ import { collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc } f
 export async function POST({ request }) {
 	const { lastVisible, limit: pageLimit = 15 } = await request.json();
 
-	console.log("Received lastVisible:", lastVisible); // Log the passed lastVisible value
+	console.log("Received lastVisible:", lastVisible);
 
 	try {
-			const postsRef = collection(firestore, 'posts');
-			let postsQuery = query(postsRef, orderBy('createdAt', 'desc'), limit(pageLimit));
+		const postsRef = collection(firestore, 'posts');
+		let postsQuery = query(postsRef, orderBy('createdAt', 'desc'), limit(pageLimit));
 
-			// If `lastVisible` is passed, extract the document ID and create DocumentReference
-			if (lastVisible) {
-					const docId = lastVisible.split('/').pop(); // Extract the document ID
+		if (lastVisible) {
+			const docId = lastVisible.split('/').pop();
+			console.log("Extracted docId:", docId);
 
-					console.log("Extracted docId:", docId); // Log the extracted docId
+			const lastDocRef = doc(firestore, 'posts', docId);
+			const lastDocSnapshot = await getDoc(lastDocRef);
 
-					// Get the DocumentReference using the extracted docId
-					const lastDocRef = doc(firestore, 'posts', docId);
-
-					// Now we get the DocumentSnapshot for that reference
-					const lastDocSnapshot = await getDoc(lastDocRef);
-					
-					// If the document exists, use it for pagination
-					if (lastDocSnapshot.exists()) {
-							console.log("Found last document:", lastDocSnapshot.data()); // Log the data of the last document
-
-							// Apply startAfter with the snapshot (not DocumentReference)
-							postsQuery = query(postsRef, orderBy('createdAt', 'desc'), startAfter(lastDocSnapshot), limit(pageLimit));
-					} else {
-							console.log('No more posts to load.');
-							return json({ posts: [], lastVisible: null }); // Return empty posts and lastVisible null
-					}
+			if (lastDocSnapshot.exists()) {
+				console.log("Found last document:", lastDocSnapshot.data());
+				postsQuery = query(postsRef, orderBy('createdAt', 'desc'), startAfter(lastDocSnapshot), limit(pageLimit));
+			} else {
+				console.log('No more posts to load.');
+				return json({ posts: [], lastVisible: null });
 			}
+		}
 
-			// Fetch the posts
-			const snapshot = await getDocs(postsQuery);
+		const snapshot = await getDocs(postsQuery);
+		if (snapshot.empty) {
+			console.log('No more posts available.');
+			return json({ posts: [], lastVisible: null });
+		}
 
-			// If snapshot is empty, return an empty list and set lastVisible to null
-			if (snapshot.empty) {
-					console.log('No more posts available.');
-					return json({ posts: [], lastVisible: null }); // No more posts, return lastVisible null
-			}
+		// Fetch posts and their user details
+		const posts = await Promise.all(snapshot.docs.map(async (postDoc) => {
+			const postData = postDoc.data();
+			const userRef = doc(firestore, 'users', postData.account); // Assuming `account` is the user ID
+			const userSnapshot = await getDoc(userRef);
 
-			const posts = snapshot.docs.map((doc) => ({
-					id: doc.id,
-					...doc.data(),
-			}));
+			return {
+				id: postDoc.id,
+				...postData,
+				userName: userSnapshot.exists() ? userSnapshot.data().displayName : 'Unknown',
+				userPhoto: userSnapshot.exists() ? userSnapshot.data().photoURL : '/default-avatar.png',
+			};
+		}));
 
-			// Get the last document for pagination
-			const lastDoc = snapshot.docs[snapshot.docs.length - 1];
+		const lastDoc = snapshot.docs[snapshot.docs.length - 1];
 
-			console.log("Last document fetched:", lastDoc.data()); // Log the last fetched document
+		console.log("Last document fetched:", lastDoc.data());
 
-			// Send the posts and the next lastVisible doc path for pagination
-			return json({
-					posts,
-					lastVisible: lastDoc ? lastDoc.ref.path : null, // Make sure lastVisible is the path, not the ref itself
-			});
+		return json({
+			posts,
+			lastVisible: lastDoc ? lastDoc.ref.path : null,
+		});
 	} catch (error) {
-			console.error('Error fetching posts:', error);
-			return json({ error: 'Failed to fetch posts.' }, { status: 500 });
+		console.error('Error fetching posts:', error);
+		return json({ error: 'Failed to fetch posts.' }, { status: 500 });
 	}
 }
