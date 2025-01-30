@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte';
   import { auth } from '$lib/firebase';
+  import { authStore } from '$lib/stores/user';
 
   export let post;
   export let userName;
@@ -35,6 +36,40 @@
     post.rawLikeCount += userLikes ? 1 : -1;
   }
 
+  async function deletePost() {
+    let userAuth;
+
+    await authStore.subscribe((value) => {
+      userAuth = value.currentUser.uid;
+    });
+
+    if(!confirm('Are you sure you want to delete this post?')) {
+      return;
+    }
+
+    if (auth.currentUser.uid !== post.account && userAuth !== auth.currentUser.uid && !auth.currentUser.uid) {
+      alert('You are not authorized to delete this post.');
+      return;
+    } else {
+        try {
+          await fetch('/api/delete-post', {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ postId: post.id, userId: auth.currentUser.uid })
+          })
+
+          // pop the post from the DOM
+          dispatch('delete', post.id);
+        } catch (error) {
+          console.error('Error deleting post:', error);
+        };
+      }
+
+    close();
+  }
+
   // Initialize the raw like count
   post.rawLikeCount = post.likeCount || 0;
 
@@ -50,10 +85,6 @@
       return count.toString();
     }
   }
-
-  onMount(() => {
-    console.log(post);
-  });
 </script>
 
 <section class="modal">
@@ -81,6 +112,11 @@
           </svg>
           <span class="modal__likeNumber">{formattedLikeCount}</span>
         </button>
+        {#if auth.currentUser.uid === post.account}
+        <button class="modal__delete" on:click={deletePost}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ED6464" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+        </button>
+        {/if}
       </div>
     </div>
     {#if post.title}
@@ -198,6 +234,15 @@
     gap: 5px;
     background: transparent;
     border: none;
+  }
+
+  .modal__delete {
+    background: transparent;
+    border: none;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin-left: auto;
   }
 
   .modal__likeNumber {

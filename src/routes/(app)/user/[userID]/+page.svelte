@@ -18,10 +18,20 @@
     selectedPost = null;
   }
 
+  async function handleDelete(event) {
+    const postId = event.detail; // Retrieve the postId from event.detail
+
+    // Remove the deleted post from the local state
+    posts = posts.filter(post => post.id !== postId);
+
+    // Close the modal if the deleted post was open
+    if (selectedPost?.id === postId) {
+      closeModal();
+    }
+  }
+
   // Reactively update state when `data` changes (e.g., new `user`, `posts`, etc.)
   $: ({ user, posts, selectedPost, loggedInUser } = data);
-
-  $: console.log('User:', loggedInUser);
 
   // Cleanup modal on destruction
   onDestroy(() => {
@@ -79,7 +89,8 @@
 {#if selectedPost}
   <PostModal 
     post={selectedPost} 
-    on:close={closeModal} 
+    on:close={closeModal}
+    on:delete={handleDelete}
     userName={user?.displayName} 
     userPhoto={user?.photoURL}
     userUid={user?.uid}

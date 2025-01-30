@@ -17,10 +17,8 @@
       const currentScrollY = window.scrollY;
 
       if (currentScrollY > lastScrollY + 10) {
-        console.log("Hiding top bar");
         hideTopBar = true; // Hide the top bar when scrolling down
       } else if (currentScrollY < lastScrollY - 5) {
-         console.log("Revealing top bar");
         hideTopBar = false; // Reveal the top bar when scrolling up
       }
 
@@ -40,7 +38,6 @@
     try {
       await signOut(auth); // Perform the sign-out
       authStore.set({ currentUser: null, isLoading: false }); // Clear the user store immediately
-      console.log('User signed out');
       goto('/signin');
     } catch (e) {
       console.error('Sign out error:', e);

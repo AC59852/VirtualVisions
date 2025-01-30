@@ -5,8 +5,6 @@ import { doc, getDoc } from 'firebase/firestore';
 export async function POST({request}) {
     const { uid } = await request.json();
 
-    console.log(uid);
-
     try {
         const userDoc = await getDoc(doc(firestore, 'users', uid));
         if (!userDoc.exists()) {

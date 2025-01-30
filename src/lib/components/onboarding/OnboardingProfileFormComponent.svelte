@@ -50,21 +50,17 @@
         if (res.items.length > 0) {
             for (const itemRef of res.items) {
                 await deleteObject(itemRef);
-                console.log(`Old photo deleted: ${itemRef.fullPath}`);
             }
         }
 
         // Upload the new file to Firebase Storage
         const uploadTaskSnapshot = await uploadBytes(storageRef, file);
-        console.log("File uploaded!");
 
         // Get the download URL of the uploaded file
         const uploadedPhotoURL = await getDownloadURL(storageRef);
-        console.log("Uploaded photo URL:", uploadedPhotoURL);
 
         // Update the user's Firestore document with the new photo URL
         await updateDoc(userRef, { photoURL: uploadedPhotoURL });
-        console.log("Photo URL updated in Firestore.");
     } catch (e) {
         console.error(e);
     }
@@ -93,7 +89,6 @@
     try {
       await signOut(auth); // Perform the sign-out
       authStore.set({ currentUser: null, isLoading: false }); // Clear the user store immediately
-      console.log('User signed out');
       goto('/signin');
     } catch (e) {
       console.error('Sign out error:', e);

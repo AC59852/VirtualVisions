@@ -3,8 +3,6 @@
   export let post;
   export let userLikes;
 
-  console.log(userLikes)
-
   async function likePost() {
 
     const user = await auth.currentUser
