@@ -170,5 +170,42 @@
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
+  @media screen and (max-width: 470px) {
+    .user__bio {
+      align-items: flex-start;
+      gap: 1.1rem;
+      padding: 1rem;
+    }
+
+    .user__profileImg {
+      width: 95px;
+      height: 95px;
+    }
+
+    .user__wrapper {
+      width: auto;
+      gap: 0.5rem;
+    }
+
+    .user__name {
+      align-items: flex-start;
+    }
+
+    .user__heading--name {
+      font-size: 1.6rem;
+    }
+
+    .user__btn {
+      display: none;
+    }
+
+    .user__info {
+      gap: 0.5rem;
+    }
+
+    .user__description {
+      width: 100%;
+    }
+  }  
 </style>

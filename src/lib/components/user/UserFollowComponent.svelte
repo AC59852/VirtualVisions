@@ -130,4 +130,30 @@
     width: 75%;
     line-height: 120%;
   }
+
+  @media screen and (max-width: 470px) {
+    .follows__item {
+      gap: 1.4rem;
+      width: 100%;
+    }
+
+    .follows__photo {
+      width: 95px;
+      height: 95px;
+      flex-grow: 1;
+      flex-shrink: 0;
+    }
+
+    .follows__text {
+      width: 100%;
+    }
+
+    .follows__heading {
+      font-size: 1.4rem;
+    }
+
+    .follows__following {
+      margin-left: auto;
+    }
+  }
 </style>
