@@ -64,9 +64,9 @@
       <h1 class="user__heading user__heading--name">{user?.displayName}</h1>
       {#if loggedInUser === null}
         <p>Loading...</p>
-      {:else if loggedInUser && user?.uid === loggedInUser.uid}
+      <!-- {:else if loggedInUser && user?.uid === loggedInUser.uid}
         <a href="/" class="user__edit user__heading">Edit profile</a>
-      {:else if loggedInUser}
+      {:else if loggedInUser} -->
         <button
           class="user__btn {isFollowing ? 'user__btn--unfollow' : 'user__btn--follow'}"
           on:click={() => toggleFollow(user.uid)}
@@ -206,6 +206,11 @@
 
     .user__description {
       width: 100%;
+      font-size: 0.9rem;
+    }
+
+    .user__list {
+      font-size: 0.9rem;
     }
   }  
 </style>
