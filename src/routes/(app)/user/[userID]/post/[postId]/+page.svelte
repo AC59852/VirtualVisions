@@ -6,6 +6,7 @@
   // convert the selectedPost.likeCount to a rounded number and add either a K or M if it's over 1000
   selectedPost.likeCount = selectedPost.likeCount > 999 ? selectedPost.likeCount > 999999 ? `${Math.round(selectedPost.likeCount / 1000000)}M` : `${Math.round(selectedPost.likeCount / 1000)}K` : selectedPost.likeCount;
 
+  console.log(selectedPost.likeCount);
   // function to enlarge the image
   let isModalOpen = false;
 

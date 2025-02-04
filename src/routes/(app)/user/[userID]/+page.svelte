@@ -16,6 +16,8 @@
   async function closeModal() {
     pushState(`/user/${user.uid}`);
     selectedPost = null;
+
+    console.log('closing modal');
   }
 
   async function handleDelete(event) {
