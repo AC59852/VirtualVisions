@@ -1,5 +1,5 @@
 import { json } from "@sveltejs/kit";
-import { firestore, storage } from '$lib/firebase';
+import { firestore } from '$lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
 export async function POST({request}) {

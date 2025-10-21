@@ -1,0 +1,7 @@
+name = "virtualvisions"
+compatibility_date = "2025-10-21"
+
+[[r2_buckets]]
+binding = "VIRTUALVISIONS_BUCKET"
+bucket_name = "virtualvisions"
+preview_bucket_name = "virtualvisions-dev"

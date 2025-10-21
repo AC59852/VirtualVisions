@@ -64,6 +64,17 @@
 			return;
 		}
 
+		const uploadForm = new FormData();
+		uploadForm.append('file', imageFile);
+		uploadForm.append('userId', userData.uid);
+
+		const res = await fetch('/api/upload', {
+			method: 'POST',
+			body: uploadForm
+		});
+
+		const { url: downloadURL } = await res.json();
+
 		// Define the path for the image in the root folder
 		const imagePath = `${userData.uid}/${imageFile.name}`;
 
@@ -73,7 +84,7 @@
 		await uploadBytes(storageRef, imageFile);
 
 		// Retrieve the public download URL for the image
-		const downloadURL = await getDownloadURL(storageRef);
+		// const downloadURL = await getDownloadURL(storageRef);
 
 		// Create a new post with the public download URL for the image
 		const post = {

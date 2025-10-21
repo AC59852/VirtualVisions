@@ -25,7 +25,6 @@ export async function PUT({ request }) {
       likeCount: increment(-1),
     });
 
-    // remove it from the user's likedPosts array
     await updateDoc(userRef, {
       likedPosts: arrayRemove(postId), // Remove the post ID from the likedPosts array
     });
@@ -35,13 +34,12 @@ export async function PUT({ request }) {
     // If not liked, add it to the likes sub-collection and increment likeCount
     await setDoc(likeRef, {
       userId: userId,
-      likedAt: new Date().toISOString(), // Optional: Track when the like occurred
+      likedAt: new Date().toISOString(),
     });
     await updateDoc(postRef, {
       likeCount: increment(1),
     });
 
-    // add it to the user's likedPosts array as a reference using the postID
     await updateDoc(userRef, {
       likedPosts: arrayUnion(postId), // Add the post ID to the likedPosts array
     });
