@@ -1,6 +1,5 @@
 import { json } from "@sveltejs/kit";
-import { firestore, storage } from '$lib/firebase';
-import { ref, getDownloadURL } from 'firebase/storage';
+import { firestore } from '$lib/firebase';
 import { collection, query, where, orderBy, limit, getDocs, getDoc, doc } from 'firebase/firestore';
 import allGames from '$lib/games/all-games.json';
 
@@ -50,8 +49,8 @@ export async function POST({ request }) {
         let imageUrl = '';
         if (path) {
           try {
-            const imageRef = ref(storage, path);
-            imageUrl = await getDownloadURL(imageRef);
+            // const imageRef = ref(storage, path);
+            imageUrl = await path;
           } catch (error) {
             console.error('Error fetching image URL:', error);
           }
