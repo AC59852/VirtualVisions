@@ -71,7 +71,7 @@
           class="user__btn {isFollowing ? 'user__btn--unfollow' : 'user__btn--follow'}"
           on:click={() => toggleFollow(user.uid)}
         >
-          {isFollowing ? 'Unfollow' : 'Follow'} <span style={isFollowing ? 'color: red;' : 'color: #86B4FA;'}>{isFollowing ? 'x' : '+'}</span>
+          {isFollowing ? 'Unfollow' : 'Follow'} <span style={isFollowing ? 'color: #FF2B2E;' : 'color: #86B4FA;'}>{isFollowing ? 'x' : '+'}</span>
         </button>
       {/if}
     </div>
