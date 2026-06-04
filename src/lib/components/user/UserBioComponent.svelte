@@ -71,7 +71,7 @@
           class="user__btn {isFollowing ? 'user__btn--unfollow' : 'user__btn--follow'}"
           on:click={() => toggleFollow(user.uid)}
         >
-          {isFollowing ? 'Unfollow' : 'Follow'} <span>{isFollowing ? 'x' : '+'}</span>
+          {isFollowing ? 'Unfollow' : 'Follow'} <span style={isFollowing ? 'color: red;' : 'color: #86B4FA;'}>{isFollowing ? 'x' : '+'}</span>
         </button>
       {/if}
     </div>
@@ -171,6 +171,18 @@
     gap: 0.5rem;
   }
 
+  .user__btn {
+    cursor: pointer;
+    color: white;
+    background-color: transparent;
+    padding: 10px 0;
+    font-family: "Outfit", sans-serif;
+    font-size: 1rem;
+    border-radius: 5px;
+    text-align: center;
+    border: none;
+  }
+  
   @media screen and (max-width: 470px) {
     .user__bio {
       align-items: flex-start;

@@ -4,7 +4,6 @@
 	import { auth, firestore } from '$lib/firebase';
 	import { onAuthStateChanged } from 'firebase/auth';
 	import { collection, addDoc, arrayUnion, doc, updateDoc, getDoc } from 'firebase/firestore';
-	import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 	import allGames from '$lib/games/all-games.json';
 	import { goto } from '$app/navigation';
 	
@@ -74,17 +73,6 @@
 		});
 
 		const { url: downloadURL } = await res.json();
-
-		// Define the path for the image in the root folder
-		const imagePath = `${userData.uid}/${imageFile.name}`;
-
-		// Upload the image to Firebase Storage
-		const storage = getStorage();
-		const storageRef = ref(storage, imagePath);
-		await uploadBytes(storageRef, imageFile);
-
-		// Retrieve the public download URL for the image
-		// const downloadURL = await getDownloadURL(storageRef);
 
 		// Create a new post with the public download URL for the image
 		const post = {

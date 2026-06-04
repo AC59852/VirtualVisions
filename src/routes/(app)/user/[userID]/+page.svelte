@@ -79,8 +79,12 @@
       </section>
     {:else}
     <div class="loading loading--explore">
+    <!-- if the account has no posts and the account is the logged-in user -->
+    {#if loggedInUser && user.uid === loggedInUser.uid}
       <p>Looks like you haven't posted anything yet. Start <a href="/post/new">Creating</a> great content for other users to enjoy.</p>
-      <!-- You can replace this with a spinner or animated loader -->
+    {:else}
+      <p>This user hasn't posted anything yet.</p>
+    {/if}
     </div>
     {/if}
   {:else}
