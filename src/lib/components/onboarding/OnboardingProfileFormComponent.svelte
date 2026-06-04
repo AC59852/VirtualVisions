@@ -3,16 +3,13 @@
   import { authStore } from '$lib/stores/user';
   import { signOut } from 'firebase/auth';
   import { goto } from '$app/navigation';
-  import { doc, getDoc, addDoc, setDoc, updateDoc, collection } from 'firebase/firestore';
-  import { getStorage, ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
+  import { doc, updateDoc } from 'firebase/firestore';
 
   let displayName = "";
   let photoUpload = "";
   let userRef = null;
   let output = null;  // This will reference the <img> element
   let file;
-
-  const storage = getStorage();
 
   async function submitOnboardingProfile() {
       try {
@@ -37,34 +34,36 @@
   }
 
   async function uploadPhoto(file) {
-    const userUid = auth.currentUser.uid;
-    const filename = `${userUid}/profile-photo/${file.name}`;
-    const storageRef = ref(storage, filename);
+    const userData = auth.currentUser;
+    const imageFile = file;
 
-    try {
-        // Get the list of all files in the user's profile-photo folder
-        const profilePhotoFolderRef = ref(storage, `${userUid}/profile-photo/`);
-        const res = await listAll(profilePhotoFolderRef);
+    const uploadForm = new FormData();
+		uploadForm.append('file', imageFile);
+		uploadForm.append('userId', userData.uid);
 
-        // If there are existing photos, delete them
-        if (res.items.length > 0) {
-            for (const itemRef of res.items) {
-                await deleteObject(itemRef);
-            }
-        }
+		await fetch('/api/upload-profile-picture', {
+			method: 'POST',
+			body: uploadForm
+		})
+    .then(response => response.json())
+    .then(data => {
+      console.log('Upload successful:', data);
 
-        // Upload the new file to Firebase Storage
-        const uploadTaskSnapshot = await uploadBytes(storageRef, file);
+      console.log('New profile picture URL:', data.url);
 
-        // Get the download URL of the uploaded file
-        const uploadedPhotoURL = await getDownloadURL(storageRef);
+      // update the users firestore document with the new profile picture URL
+      const userDocRef = doc(firestore, `users/${userData.uid}`);
+      updateDoc(userDocRef, { photoURL: data.url })
+        .then(() => {
+          console.log('Firestore document updated with new profile picture URL');
+        })
+        .catch((error) => {
+          console.error('Error updating Firestore document:', error);
+        });
+    })
 
-        // Update the user's Firestore document with the new photo URL
-        await updateDoc(userRef, { photoURL: uploadedPhotoURL });
-    } catch (e) {
-        console.error(e);
-    }
-}
+    console.log("Uploading", imageFile.name, "for", userData.uid);
+  }
 
   function previewImage(event) {
       file = event.target.files[0];
@@ -96,7 +95,7 @@
   }
 </script>
 
-<form class="onboarding__form onboarding__form--profile" on:submit={submitOnboardingProfile}>
+<form class="onboarding__form onboarding__form--profile" on:submit|preventDefault={submitOnboardingProfile}>
   <h1 class="onboarding__heading">Profile</h1>
 
   <!-- Middle row for the image and display name input -->
