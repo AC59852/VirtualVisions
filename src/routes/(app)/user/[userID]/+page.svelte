@@ -16,6 +16,8 @@
   async function closeModal() {
     pushState(`/user/${user.uid}`);
     selectedPost = null;
+
+    console.log('closing modal');
   }
 
   async function handleDelete(event) {
@@ -160,4 +162,13 @@
 		transform: translateY(0);
 		color: black;
 	}
+
+  @media screen and (max-width: 470px) {
+    .user {
+      padding: 5rem 0;
+    }
+    .posts {
+      gap: 2px;
+    }
+  }
 </style>

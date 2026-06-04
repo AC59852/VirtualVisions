@@ -43,4 +43,12 @@
     flex-direction: column;
     gap: 5rem;
   }
+
+  @media screen and (max-width: 470px) {
+    .follows__list {
+      gap: 2rem;
+      width: 95%;
+      margin: 0 auto;
+    }
+  }
 </style>

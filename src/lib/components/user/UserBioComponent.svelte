@@ -64,9 +64,9 @@
       <h1 class="user__heading user__heading--name">{user?.displayName}</h1>
       {#if loggedInUser === null}
         <p>Loading...</p>
-      {:else if loggedInUser && user?.uid === loggedInUser.uid}
+      <!-- {:else if loggedInUser && user?.uid === loggedInUser.uid}
         <a href="/" class="user__edit user__heading">Edit profile</a>
-      {:else if loggedInUser}
+      {:else if loggedInUser} -->
         <button
           class="user__btn {isFollowing ? 'user__btn--unfollow' : 'user__btn--follow'}"
           on:click={() => toggleFollow(user.uid)}
@@ -183,4 +183,46 @@
     border: none;
   }
   
+  @media screen and (max-width: 470px) {
+    .user__bio {
+      align-items: flex-start;
+      gap: 1.1rem;
+      padding: 1rem;
+    }
+
+    .user__profileImg {
+      width: 95px;
+      height: 95px;
+    }
+
+    .user__wrapper {
+      width: auto;
+      gap: 0.5rem;
+    }
+
+    .user__name {
+      align-items: flex-start;
+    }
+
+    .user__heading--name {
+      font-size: 1.6rem;
+    }
+
+    .user__btn {
+      display: none;
+    }
+
+    .user__info {
+      gap: 0.5rem;
+    }
+
+    .user__description {
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    .user__list {
+      font-size: 0.9rem;
+    }
+  }  
 </style>
